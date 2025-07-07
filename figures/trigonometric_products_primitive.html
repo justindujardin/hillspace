@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trigonometric Products Primitive Visualization</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script
+      crossorigin
+      src="https://unpkg.com/react@18/umd/react.production.min.js"
+    ></script>
+    <script
+      crossorigin
+      src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"
+    ></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel">
+      const { useState, useRef } = React;
+
+      const TrigonometricProductVisualization = () => {
+        const [input1, setInput1] = useState(30);
+        const [input2, setInput2] = useState(15);
+        const [w0, setW0] = useState(1.0); // cos vs sin selection
+        const [w1, setW1] = useState(1.0); // sum vs diff selection
+        const [lastPreset, setLastPreset] = useState("cos"); // Track last clicked preset
+        const vizRef = useRef(null);
+
+        // Convert to radians
+        const theta1 = (input1 * Math.PI) / 180;
+        const theta2 = (input2 * Math.PI) / 180;
+
+        // Compute trigonometric components
+        const cos1 = Math.cos(theta1);
+        const sin1 = Math.sin(theta1);
+        const cos2 = Math.cos(theta2);
+        const sin2 = Math.sin(theta2);
+
+        // Four fundamental trigonometric products
+        const cos_diff = cos1 * cos2 + sin1 * sin2; // cos(θ₁ - θ₂)
+        const cos_sum = cos1 * cos2 - sin1 * sin2; // cos(θ₁ + θ₂)
+        const sin_diff = sin1 * cos2 - cos1 * sin2; // sin(θ₁ - θ₂)
+        const sin_sum = sin1 * cos2 + cos1 * sin2; // sin(θ₁ + θ₂)
+
+        // Apply weight matrix selection
+        const result =
+          w0 * (w1 * cos_diff + (1 - w1) * cos_sum) +
+          (1 - w0) * (w1 * sin_diff + (1 - w1) * sin_sum);
+
+        // Calculate ground truth based on last preset clicked
+        let groundTruth = null;
+        let operationType = "";
+        let operationFormula = "";
+        let isKnownOperation = false;
+
+        // Determine operation type based on current weights (for display)
+        if (Math.abs(w0 - 1.0) < 0.1 && Math.abs(w1 - 0.0) < 0.1) {
+          operationType = "Cosine Sum";
+          operationFormula = `cos(${input1}° + ${input2}°)`;
+        } else if (Math.abs(w0 - 0.0) < 0.1 && Math.abs(w1 - 0.0) < 0.1) {
+          operationType = "Sine Sum";
+          operationFormula = `sin(${input1}° + ${input2}°)`;
+        } else if (Math.abs(w0 - 1.0) < 0.1 && Math.abs(w1 - 1.0) < 0.1) {
+          operationType = "Cosine Difference";
+          operationFormula = `cos(${input1}° - ${input2}°)`;
+        } else if (Math.abs(w0 - 0.0) < 0.1 && Math.abs(w1 - 1.0) < 0.1) {
+          operationType = "Sine Difference";
+          operationFormula = `sin(${input1}° - ${input2}°)`;
+        } else {
+          operationType = "Weighted Combination";
+          operationFormula = `mixed trigonometric products`;
+        }
+
+        // Always calculate ground truth based on last preset
+        if (lastPreset === "cos_add") {
+          groundTruth = Math.cos(theta1 + theta2);
+          isKnownOperation = true;
+        } else if (lastPreset === "sin_add") {
+          groundTruth = Math.sin(theta1 + theta2);
+          isKnownOperation = true;
+        } else if (lastPreset === "cos_sub") {
+          groundTruth = Math.cos(theta1 - theta2);
+          isKnownOperation = true;
+        } else if (lastPreset === "sin_sub") {
+          groundTruth = Math.sin(theta1 - theta2);
+          isKnownOperation = true;
+        }
+
+        // Calculate error if we have ground truth
+        const error = isKnownOperation ? Math.abs(result - groundTruth) : null;
+
+        const downloadAsPNG = () => {
+          const element = vizRef.current;
+          if (!element) return;
+
+          html2canvas(element, {
+            backgroundColor: "#ffffff",
+            scale: 2,
+            useCORS: true,
+            logging: false,
+          })
+            .then((canvas) => {
+              const link = document.createElement("a");
+              link.download = `trigonometric_product_primitive_${input1}_${input2}_${w0}_${w1}.png`;
+              link.href = canvas.toDataURL("image/png");
+              link.click();
+            })
+            .catch(() => {
+              alert("PNG download failed. Please take a screenshot instead.");
+            });
+        };
+
+        const downloadAsSVG = () => {
+          const element = vizRef.current;
+          if (!element) return;
+
+          domtoimage
+            .toSvg(element, {
+              bgcolor: "#ffffff",
+              quality: 1.0,
+            })
+            .then((dataUrl) => {
+              const link = document.createElement("a");
+              link.download = `trigonometric_product_primitive_${input1}_${input2}_${w0}_${w1}.svg`;
+              link.href = dataUrl;
+              link.click();
+            })
+            .catch(() => {
+              alert(
+                "SVG download failed. You may need to use PNG format instead."
+              );
+            });
+        };
+
+        return (
+          <div className="w-full max-w-6xl mx-auto p-6 bg-gray-100">
+            {/* Controls */}
+            <div className="bg-white rounded-lg p-4 mb-6 shadow-sm">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                Customize Values
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Input 1 (degrees)
+                  </label>
+                  <input
+                    type="number"
+                    value={input1}
+                    onChange={(e) => setInput1(parseFloat(e.target.value) || 0)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Input 2 (degrees)
+                  </label>
+                  <input
+                    type="number"
+                    value={input2}
+                    onChange={(e) => setInput2(parseFloat(e.target.value) || 0)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    W[0] (cos/sin selector)
+                  </label>
+                  <input
+                    type="number"
+                    step="0.05"
+                    min="-1"
+                    max="1"
+                    value={w0}
+                    onChange={(e) => setW0(parseFloat(e.target.value) || 0)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                  />
+                  <div className="text-xs text-gray-500 mt-1">
+                    1.0=cos, 0.0=sin
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    W[1] (sum/diff selector)
+                  </label>
+                  <input
+                    type="number"
+                    step="0.05"
+                    min="-1"
+                    max="1"
+                    value={w1}
+                    onChange={(e) => setW1(parseFloat(e.target.value) || 0)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                  />
+                  <div className="text-xs text-gray-500 mt-1">
+                    1.0=diff, 0.0=sum
+                  </div>
+                </div>
+              </div>
+
+              {/* Preset buttons */}
+              <div className="mb-4">
+                <div className="text-sm font-medium text-gray-700 mb-2">
+                  Quick Presets (Compound Operations Only):
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={() => {
+                      setW0(1.0);
+                      setW1(0.0);
+                      setLastPreset("cos_add");
+                    }}
+                    className="bg-green-100 hover:bg-green-200 text-green-800 text-sm py-1 px-3 rounded transition-colors"
+                  >
+                    cos(θ₁ + θ₂)
+                  </button>
+                  <button
+                    onClick={() => {
+                      setW0(0.0);
+                      setW1(0.0);
+                      setLastPreset("sin_add");
+                    }}
+                    className="bg-emerald-100 hover:bg-emerald-200 text-emerald-800 text-sm py-1 px-3 rounded transition-colors"
+                  >
+                    sin(θ₁ + θ₂)
+                  </button>
+                  <button
+                    onClick={() => {
+                      setW0(1.0);
+                      setW1(1.0);
+                      setLastPreset("cos_sub");
+                    }}
+                    className="bg-purple-100 hover:bg-purple-200 text-purple-800 text-sm py-1 px-3 rounded transition-colors"
+                  >
+                    cos(θ₁ - θ₂)
+                  </button>
+                  <button
+                    onClick={() => {
+                      setW0(0.0);
+                      setW1(1.0);
+                      setLastPreset("sin_sub");
+                    }}
+                    className="bg-violet-100 hover:bg-violet-200 text-violet-800 text-sm py-1 px-3 rounded transition-colors"
+                  >
+                    sin(θ₁ - θ₂)
+                  </button>
+                </div>
+                <div className="text-xs text-gray-500 mt-2">
+                  Note: Basic cos/sin operations belong in rotation space (unary
+                  unit circle approach)
+                </div>
+              </div>
+
+              <div className="flex space-x-3">
+                <button
+                  onClick={downloadAsPNG}
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+                >
+                  📥 Download PNG
+                </button>
+                <button
+                  onClick={downloadAsSVG}
+                  className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+                >
+                  📄 Download SVG
+                </button>
+              </div>
+            </div>
+
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                Trigonometric Products Primitive Visualization
+              </h2>
+              <p className="text-gray-600">
+                How four fundamental trigonometric products enable trigonometric
+                operations
+              </p>
+            </div>
+            {/* Visualization */}
+            <div className="bg-white rounded-lg p-6">
+              <div ref={vizRef} className="space-y-8">
+                {/* Main operation display */}
+                <div className="flex items-center justify-center space-x-6 flex-wrap">
+                  {/* Input 1 */}
+                  <div className="text-center">
+                    <div className="text-sm text-gray-500 mb-2">Input 1</div>
+                    <div className="bg-blue-100 px-3 py-2 rounded text-xl font-mono text-blue-800">
+                      {input1}°
+                    </div>
+                    <div className="text-xs text-gray-400 mt-1">
+                      {theta1.toFixed(3)} rad
+                    </div>
+                  </div>
+
+                  <div className="text-lg text-gray-700">+</div>
+
+                  {/* Input 2 */}
+                  <div className="text-center">
+                    <div className="text-sm text-gray-500 mb-2">Input 2</div>
+                    <div className="bg-blue-100 px-3 py-2 rounded text-xl font-mono text-blue-800">
+                      {input2}°
+                    </div>
+                    <div className="text-xs text-gray-400 mt-1">
+                      {theta2.toFixed(3)} rad
+                    </div>
+                  </div>
+
+                  <div className="text-2xl text-gray-700">→</div>
+
+                  {/* Four Products Matrix */}
+                  <div className="text-center">
+                    <div className="text-sm text-gray-500 mb-2">
+                      Trigonometric Products
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="bg-red-100 px-2 py-1 rounded text-sm font-mono text-red-800">
+                        cos_diff
+                        <br />
+                        {cos_diff.toFixed(3)}
+                      </div>
+                      <div className="bg-orange-100 px-2 py-1 rounded text-sm font-mono text-orange-800">
+                        cos_sum
+                        <br />
+                        {cos_sum.toFixed(3)}
+                      </div>
+                      <div className="bg-yellow-100 px-2 py-1 rounded text-sm font-mono text-yellow-800">
+                        sin_diff
+                        <br />
+                        {sin_diff.toFixed(3)}
+                      </div>
+                      <div className="bg-amber-100 px-2 py-1 rounded text-sm font-mono text-amber-800">
+                        sin_sum
+                        <br />
+                        {sin_sum.toFixed(3)}
+                      </div>
+                    </div>
+                    <div className="text-xs text-gray-400 mt-1">
+                      2×2 Product Matrix
+                    </div>
+                  </div>
+
+                  <div className="text-lg text-gray-700">×</div>
+
+                  {/* Weight Matrix */}
+                  <div className="text-center">
+                    <div className="text-sm text-gray-500 mb-2">
+                      Weight Matrix
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="bg-green-100 px-2 py-1 rounded text-sm font-mono text-green-800">
+                        W[0]×W[1]
+                        <br />
+                        {(w0 * w1).toFixed(3)}
+                      </div>
+                      <div className="bg-green-100 px-2 py-1 rounded text-sm font-mono text-green-800">
+                        W[0]×(1-W[1])
+                        <br />
+                        {(w0 * (1 - w1)).toFixed(3)}
+                      </div>
+                      <div className="bg-green-100 px-2 py-1 rounded text-sm font-mono text-green-800">
+                        (1-W[0])×W[1]
+                        <br />
+                        {((1 - w0) * w1).toFixed(3)}
+                      </div>
+                      <div className="bg-green-100 px-2 py-1 rounded text-sm font-mono text-green-800">
+                        (1-W[0])×(1-W[1])
+                        <br />
+                        {((1 - w0) * (1 - w1)).toFixed(3)}
+                      </div>
+                    </div>
+                    <div className="text-xs text-green-600 mt-1 font-medium">
+                      from Hill Space
+                    </div>
+                  </div>
+
+                  <div className="text-lg text-gray-700">=</div>
+
+                  {/* Result */}
+                  <div className="text-center">
+                    <div className="text-sm text-gray-500 mb-2">
+                      {operationType}
+                    </div>
+                    <div className="space-y-2">
+                      {/* Model prediction */}
+                      <div>
+                        <div className="text-xs text-gray-400 mb-1">
+                          Model Prediction
+                        </div>
+                        <div className="bg-purple-100 px-4 py-3 rounded text-xl font-mono text-purple-800">
+                          {result.toFixed(6)}
+                        </div>
+                      </div>
+
+                      {/* Ground truth comparison */}
+                      {isKnownOperation && (
+                        <div>
+                          <div className="text-xs text-gray-400 mb-1">
+                            Calculator Says
+                          </div>
+                          <div className="bg-blue-100 px-4 py-3 rounded text-xl font-mono text-blue-800">
+                            {groundTruth.toFixed(6)}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Error display */}
+                      {error !== null && (
+                        <div>
+                          <div className="text-xs text-gray-400 mb-1">
+                            Error
+                          </div>
+                          <div
+                            className={`px-4 py-2 rounded text-lg font-mono ${
+                              error < 0.000001
+                                ? "bg-green-100 text-green-800"
+                                : error < 0.001
+                                ? "bg-yellow-100 text-yellow-800"
+                                : "bg-red-100 text-red-800"
+                            }`}
+                          >
+                            {error < 0.000001
+                              ? error.toExponential(2)
+                              : error.toFixed(6)}
+                          </div>
+                          <div
+                            className={`text-xs mt-1 ${
+                              error < 0.000001
+                                ? "text-green-600"
+                                : error < 0.001
+                                ? "text-yellow-600"
+                                : "text-red-600"
+                            }`}
+                          >
+                            {error < 0.000001
+                              ? "Machine precision!"
+                              : error < 0.001
+                              ? "Close approximation"
+                              : "Weights need adjustment"}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="text-xs text-purple-600 mt-2 font-medium">
+                      {operationFormula}
+                    </div>
+                    <div className="text-xs text-gray-400 mt-1">
+                      from Hill Space
+                    </div>
+                  </div>
+                </div>
+
+                {/* Step-by-step breakdown */}
+                <div className="bg-gray-50 rounded-lg p-6">
+                  <h3 className="text-md font-semibold text-gray-800 mb-4">
+                    Step-by-Step Solution:
+                  </h3>
+
+                  <div className="space-y-4">
+                    {/* Step 1 */}
+                    <div className="flex items-center space-x-3">
+                      <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">
+                        1
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="font-mono text-sm">
+                          <div className="inline-flex items-center space-x-1 whitespace-nowrap mb-1">
+                            <span>Compute trig components: cos(</span>
+                            <span className="bg-blue-200 px-2 py-1 rounded">
+                              {input1}°
+                            </span>
+                            <span>) =</span>
+                            <span className="bg-blue-200 px-2 py-1 rounded">
+                              {cos1.toFixed(3)}
+                            </span>
+                          </div>
+                          <div className="inline-flex items-center space-x-1 whitespace-nowrap">
+                            <span>, sin(</span>
+                            <span className="bg-blue-200 px-2 py-1 rounded">
+                              {input1}°
+                            </span>
+                            <span>) =</span>
+                            <span className="bg-blue-200 px-2 py-1 rounded">
+                              {sin1.toFixed(3)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Step 2 */}
+                    <div className="flex items-center space-x-3">
+                      <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">
+                        2
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="font-mono text-sm">
+                          <div className="inline-flex items-center space-x-1 whitespace-nowrap mb-1">
+                            <span>Compute trig components: cos(</span>
+                            <span className="bg-blue-200 px-2 py-1 rounded">
+                              {input2}°
+                            </span>
+                            <span>) =</span>
+                            <span className="bg-blue-200 px-2 py-1 rounded">
+                              {cos2.toFixed(3)}
+                            </span>
+                          </div>
+                          <div className="inline-flex items-center space-x-1 whitespace-nowrap">
+                            <span>, sin(</span>
+                            <span className="bg-blue-200 px-2 py-1 rounded">
+                              {input2}°
+                            </span>
+                            <span>) =</span>
+                            <span className="bg-blue-200 px-2 py-1 rounded">
+                              {sin2.toFixed(3)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Step 3 */}
+                    <div className="flex items-center space-x-3">
+                      <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">
+                        3
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="font-mono text-sm">
+                          <div className="inline-flex items-center space-x-1 whitespace-nowrap mb-1">
+                            <span>Compute four products:</span>
+                            <span className="bg-red-200 px-2 py-1 rounded">
+                              cos_diff = {cos_diff.toFixed(3)}
+                            </span>
+                            <span>,</span>
+                            <span className="bg-orange-200 px-2 py-1 rounded">
+                              cos_sum = {cos_sum.toFixed(3)}
+                            </span>
+                          </div>
+                          <div className="inline-flex items-center space-x-1 whitespace-nowrap">
+                            <span className="bg-yellow-200 px-2 py-1 rounded">
+                              sin_diff = {sin_diff.toFixed(3)}
+                            </span>
+                            <span>,</span>
+                            <span className="bg-amber-200 px-2 py-1 rounded">
+                              sin_sum = {sin_sum.toFixed(3)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Step 4 */}
+                    <div className="flex items-center space-x-3">
+                      <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">
+                        4
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="font-mono text-sm">
+                          <div className="inline-flex items-center space-x-1 whitespace-nowrap mb-1">
+                            <span>Apply weight matrix:</span>
+                            <span className="bg-green-200 px-2 py-1 rounded">
+                              {(w0 * w1).toFixed(3)}
+                            </span>
+                            <span>×</span>
+                            <span className="bg-red-200 px-2 py-1 rounded">
+                              {cos_diff.toFixed(3)}
+                            </span>
+                            <span>+</span>
+                            <span className="bg-green-200 px-2 py-1 rounded">
+                              {(w0 * (1 - w1)).toFixed(3)}
+                            </span>
+                            <span>×</span>
+                            <span className="bg-orange-200 px-2 py-1 rounded">
+                              {cos_sum.toFixed(3)}
+                            </span>
+                            <span>+</span>
+                          </div>
+                          <div className="inline-flex items-center space-x-1 whitespace-nowrap">
+                            <span className="bg-green-200 px-2 py-1 rounded">
+                              {((1 - w0) * w1).toFixed(3)}
+                            </span>
+                            <span>×</span>
+                            <span className="bg-yellow-200 px-2 py-1 rounded">
+                              {sin_diff.toFixed(3)}
+                            </span>
+                            <span>+</span>
+                            <span className="bg-green-200 px-2 py-1 rounded">
+                              {((1 - w0) * (1 - w1)).toFixed(3)}
+                            </span>
+                            <span>×</span>
+                            <span className="bg-amber-200 px-2 py-1 rounded">
+                              {sin_sum.toFixed(3)}
+                            </span>
+                            <span>=</span>
+                            <span className="bg-purple-200 px-2 py-1 rounded font-bold">
+                              {result.toFixed(6)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      };
+
+      // Render the component
+      ReactDOM.render(
+        <TrigonometricProductVisualization />,
+        document.getElementById("root")
+      );
+    </script>
+  </body>
+</html>
