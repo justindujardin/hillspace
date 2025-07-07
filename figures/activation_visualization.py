@@ -97,7 +97,7 @@ def plot_hill_space_cross_sections(figsize=(12, 5), dpi=300):
 
 
 if __name__ == "__main__":
-    filename = "hill_space_cross_sections.png"
+    filename = "hill_space_cross_sections.svg"
     fig = plot_hill_space_cross_sections()
     fig.savefig(filename, dpi=300, bbox_inches="tight")
     print(f"Saved → {filename}")
