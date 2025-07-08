@@ -1,0 +1,13 @@
+config,operation,distribution,train_range,test_range,hill_space_matched_mse,hill_space_matched_epochs,hill_space_universal_mse,hill_space_universal_epochs
+exponential_0.8_0.5,add,exponential,"0.8,0.5","0.8,0.5",1.7554228040774568e-14,1,1.7554228040774568e-14,2
+exponential_0.8_0.5,subtract,exponential,"0.8,0.5","0.8,0.5",1.128548518151767e-14,1,1.128548518151767e-14,2
+exponential_0.8_0.5,multiply,exponential,"0.8,0.5","0.8,0.5",4.7754091839191493e-14,1,4.7754091839191493e-14,2
+exponential_0.8_0.5,divide,exponential,"0.8,0.5","0.8,0.5",1.4330532350346577e-12,1,1.4330532350346577e-12,2
+uniform_-5_5_to_-10_-5,add,uniform,"-5.0,5.0","-10.0,-5.0",2.3030821694192125e-13,1,2.3030821694192125e-13,2
+uniform_-5_5_to_-10_-5,subtract,uniform,"-5.0,5.0","-10.0,-5.0",8.66494505304616e-14,1,8.66494505304616e-14,2
+uniform_-5_5_to_-10_-5,multiply,uniform,"-5.0,5.0","-10.0,-5.0",3313.2579711110134,100,7.190773356905527e-12,2
+uniform_-5_5_to_-10_-5,divide,uniform,"-5.0,5.0","-10.0,-5.0",0.18700348831146982,100,2.326703283228134e-15,2
+normal_-3_3_to_8_10,add,truncated_normal,"-3.0,3.0","8.0,10.0",4.555005261863698e-13,1,4.555005261863698e-13,2
+normal_-3_3_to_8_10,subtract,truncated_normal,"-3.0,3.0","8.0,10.0",1.5249264714806869e-13,1,1.5249264714806869e-13,2
+normal_-3_3_to_8_10,multiply,truncated_normal,"-3.0,3.0","8.0,10.0",1.485588080348141e-11,1,1.485588080348141e-11,2
+normal_-3_3_to_8_10,divide,truncated_normal,"-3.0,3.0","8.0,10.0",965.8237439312667,100,3.0506679466885673e-15,2

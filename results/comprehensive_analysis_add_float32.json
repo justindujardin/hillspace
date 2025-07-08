@@ -1,0 +1,66 @@
+{
+  "operation": "add",
+  "dtype": "torch.float32",
+  "total_samples_processed": 100000000,
+  "methods": {
+    "analytical": {
+      "num_samples": 100000000,
+      "nan_count": 0,
+      "inf_count": 0,
+      "nan_rate": 0.0,
+      "inf_rate": 0.0,
+      "mean_squared_error": 5.249622793277668e-08,
+      "max_squared_error": 9.5367431640625e-07,
+      "median_squared_error": 0.0,
+      "q99_squared_error": 9.5367431640625e-07,
+      "q99_9_squared_error": 9.5367431640625e-07,
+      "q99_99_squared_error": 9.5367431640625e-07,
+      "std_squared_error": 1.2531258034306067e-07
+    },
+    "complex64": {
+      "num_samples": 100000000,
+      "nan_count": 0,
+      "inf_count": 0,
+      "nan_rate": 0.0,
+      "inf_rate": 0.0,
+      "mean_squared_error": 5.249622793277668e-08,
+      "max_squared_error": 9.5367431640625e-07,
+      "median_squared_error": 0.0,
+      "q99_squared_error": 9.5367431640625e-07,
+      "q99_9_squared_error": 9.5367431640625e-07,
+      "q99_99_squared_error": 9.5367431640625e-07,
+      "std_squared_error": 1.2531258034306067e-07
+    },
+    "complex128": {
+      "num_samples": 100000000,
+      "nan_count": 0,
+      "inf_count": 0,
+      "nan_rate": 0.0,
+      "inf_rate": 0.0,
+      "mean_squared_error": 5.249622793277668e-08,
+      "max_squared_error": 9.5367431640625e-07,
+      "median_squared_error": 0.0,
+      "q99_squared_error": 9.5367431640625e-07,
+      "q99_9_squared_error": 9.5367431640625e-07,
+      "q99_99_squared_error": 9.5367431640625e-07,
+      "std_squared_error": 1.2531258034306067e-07
+    },
+    "logspace": {
+      "num_samples": 100000000,
+      "nan_count": 0,
+      "inf_count": 0,
+      "nan_rate": 0.0,
+      "inf_rate": 0.0,
+      "mean_squared_error": 5.249622793277668e-08,
+      "max_squared_error": 9.5367431640625e-07,
+      "median_squared_error": 0.0,
+      "q99_squared_error": 9.5367431640625e-07,
+      "q99_9_squared_error": 9.5367431640625e-07,
+      "q99_99_squared_error": 9.5367431640625e-07,
+      "std_squared_error": 1.2531258034306067e-07
+    }
+  },
+  "run_id": 0,
+  "success": true,
+  "elapsed_time": 556.3053658008575
+}

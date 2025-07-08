@@ -1,0 +1,66 @@
+{
+  "operation": "multiply",
+  "dtype": "torch.float32",
+  "total_samples_processed": 100000000,
+  "methods": {
+    "analytical": {
+      "num_samples": 100000000,
+      "nan_count": 0,
+      "inf_count": 0,
+      "nan_rate": 0.0,
+      "inf_rate": 0.0,
+      "mean_squared_error": 0.7381501005366878,
+      "max_squared_error": 16.0,
+      "median_squared_error": 0.08386202352289729,
+      "q99_squared_error": 11.201771436622948,
+      "q99_9_squared_error": 15.480753496474343,
+      "q99_99_squared_error": 15.946973938393057,
+      "std_squared_error": 1.8432603586982328
+    },
+    "complex64": {
+      "num_samples": 100000000,
+      "nan_count": 0,
+      "inf_count": 0,
+      "nan_rate": 0.0,
+      "inf_rate": 0.0,
+      "mean_squared_error": 167.3125413241781,
+      "max_squared_error": 10133.587564301342,
+      "median_squared_error": 12.444024560264895,
+      "q99_squared_error": 2277.4376516062894,
+      "q99_9_squared_error": 4503.76858285439,
+      "q99_99_squared_error": 6360.030865609417,
+      "std_squared_error": 446.59457153623
+    },
+    "complex128": {
+      "num_samples": 100000000,
+      "nan_count": 0,
+      "inf_count": 0,
+      "nan_rate": 0.0,
+      "inf_rate": 0.0,
+      "mean_squared_error": 0.7381501005366878,
+      "max_squared_error": 16.0,
+      "median_squared_error": 0.08386202352289729,
+      "q99_squared_error": 11.201771436622948,
+      "q99_9_squared_error": 15.480753496474343,
+      "q99_99_squared_error": 15.946973938393057,
+      "std_squared_error": 1.8432603586982328
+    },
+    "logspace": {
+      "num_samples": 100000000,
+      "nan_count": 0,
+      "inf_count": 0,
+      "nan_rate": 0.0,
+      "inf_rate": 0.0,
+      "mean_squared_error": 1112149708255456.2,
+      "max_squared_error": 1.0197853968779708e+16,
+      "median_squared_error": 349162788447459.5,
+      "q99_squared_error": 7435828791031277.0,
+      "q99_9_squared_error": 9153110447391382.0,
+      "q99_99_squared_error": 9802811549799800.0,
+      "std_squared_error": 1664308768787118.2
+    }
+  },
+  "run_id": 2,
+  "success": true,
+  "elapsed_time": 532.7957098484039
+}

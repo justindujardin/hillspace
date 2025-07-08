@@ -1,0 +1,66 @@
+{
+  "operation": "divide",
+  "dtype": "torch.float32",
+  "total_samples_processed": 100000000,
+  "methods": {
+    "analytical": {
+      "num_samples": 100000000,
+      "nan_count": 0,
+      "inf_count": 0,
+      "nan_rate": 0.0,
+      "inf_rate": 0.0,
+      "mean_squared_error": 6.635943938305896e-08,
+      "max_squared_error": 4.274330070640027,
+      "median_squared_error": 4.968426479131758e-16,
+      "q99_squared_error": 2.1082986787228037e-12,
+      "q99_9_squared_error": 2.103080767596448e-10,
+      "q99_99_squared_error": 2.198363036199652e-08,
+      "std_squared_error": 0.00044020725744446757
+    },
+    "complex64": {
+      "num_samples": 100000000,
+      "nan_count": 0,
+      "inf_count": 0,
+      "nan_rate": 0.0,
+      "inf_rate": 0.0,
+      "mean_squared_error": 8.611429588589583e-06,
+      "max_squared_error": 486.9721420914187,
+      "median_squared_error": 5.017739018340868e-14,
+      "q99_squared_error": 1.5560885632515103e-10,
+      "q99_9_squared_error": 1.3831226446001976e-08,
+      "q99_99_squared_error": 1.3330325903115667e-06,
+      "std_squared_error": 0.05322701361118626
+    },
+    "complex128": {
+      "num_samples": 100000000,
+      "nan_count": 0,
+      "inf_count": 0,
+      "nan_rate": 0.0,
+      "inf_rate": 0.0,
+      "mean_squared_error": 5.680925950418022e-08,
+      "max_squared_error": 3.7347676664842955,
+      "median_squared_error": 3.1976724989135785e-16,
+      "q99_squared_error": 1.0578371176729505e-12,
+      "q99_9_squared_error": 1.26210850035324e-10,
+      "q99_99_squared_error": 1.1850150687288856e-08,
+      "std_squared_error": 0.00038750779501504787
+    },
+    "logspace": {
+      "num_samples": 100000000,
+      "nan_count": 0,
+      "inf_count": 0,
+      "nan_rate": 0.0,
+      "inf_rate": 0.0,
+      "mean_squared_error": 32106568.69987258,
+      "max_squared_error": 1539658778279293.0,
+      "median_squared_error": 3.11636556019926e-07,
+      "q99_squared_error": 2496.5937998696336,
+      "q99_9_squared_error": 252165.94209673526,
+      "q99_99_squared_error": 25110567.00640891,
+      "std_squared_error": 165749986914.3991
+    }
+  },
+  "run_id": 3,
+  "success": true,
+  "elapsed_time": 620.5043532848358
+}
