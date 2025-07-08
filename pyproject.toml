@@ -1,0 +1,27 @@
+[project]
+name = "hillspace"
+version = "0.1.0"
+description = "Hill Space is All You Need - Paper reference code"
+readme = "README.md"
+license = "LICENSE.md"
+requires-python = ">=3.10"
+dependencies = [
+    "matplotlib>=3.10.3",
+    "numpy>=2.2.6",
+    "pandas>=2.3.1",
+    "safetensors>=0.5.3",
+    "schedulefree>=1.4.1",
+    "scipy>=1.15.3",
+    "seaborn>=0.13.2",
+    "torch>=2.7.1",
+    "wandb>=0.21.0",
+]
+
+[dependency-groups]
+dev = [
+    "black>=25.1.0",
+    "flake8>=7.3.0",
+    "isort>=6.0.1",
+    "mypy>=1.16.1",
+    "pylance>=0.31.0",
+]
