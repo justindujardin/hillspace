@@ -585,7 +585,7 @@ def generate_comprehensive_error_table():
 if __name__ == "__main__":
     # Run comprehensive analysis
     print("Starting comprehensive Hill Space error analysis...")
-    results = run_comprehensive_analysis(num_processes=2)
+    # results = run_comprehensive_analysis(num_processes=2)
 
     print("\nGenerating comprehensive error table...")
     generate_comprehensive_error_table()

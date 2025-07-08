@@ -13,9 +13,9 @@ import torch.nn as nn
 from torch.utils.data import DataLoader
 from schedulefree import AdamWScheduleFree
 
-from .datasource.operator_dataset import create_mathy_dataloaders
-from .datasource.operator_specs import OPERATION_REGISTRY
-from .mathy_unit import MathyUnit
+from ..dataset.operator_dataset import create_mathy_dataloaders
+from ..dataset.operator_specs import OPERATION_REGISTRY
+from ..model import MathyUnit
 
 
 def periodic_eval(
@@ -560,5 +560,5 @@ def aggregate_initialization_results():
 
 if __name__ == "__main__":
     torch.multiprocessing.set_start_method("spawn", force=True)
-    run_initialization_analysis(num_processes=6)
+    # run_initialization_analysis(num_processes=6)
     aggregate_initialization_results()

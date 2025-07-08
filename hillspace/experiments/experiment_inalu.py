@@ -12,9 +12,9 @@ import torch.nn as nn
 from schedulefree import AdamWScheduleFree
 from torch.utils.data import DataLoader
 
-from .datasource.operator_dataset import create_mathy_dataloaders
-from .datasource.operator_specs import OPERATION_REGISTRY
-from .mathy_unit import MathyUnit
+from ..dataset.operator_dataset import create_mathy_dataloaders
+from ..dataset.operator_specs import OPERATION_REGISTRY
+from ..model import MathyUnit
 
 
 def evaluate_model(
@@ -619,5 +619,5 @@ def aggregate_results():
 if __name__ == "__main__":
     torch.multiprocessing.set_start_method("spawn", force=True)
     print("Starting iNALU comparison experiment...")
-    run_inalu_comparison_parallel(6)
+    # run_inalu_comparison_parallel(6)
     aggregate_results()
