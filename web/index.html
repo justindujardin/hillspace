@@ -3,7 +3,63 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="author" content="Justin DuJardin" />
     <title>Hill Space is All You Need</title>
+    <script type="application/ld+json">
+      {
+        "@context": "http://schema.org",
+        "@type": "Person",
+        "name": "Justin DuJardin",
+        "jobTitle": "Software Developer",
+        "url": "https://www.justindujardin.com/",
+        "image": "https://www.justindujardin.com/justin.png",
+        "sameAs": [
+          "https://www.github.com/justindujardin",
+          "https://www.linkedin.com/in/justindujardin",
+          "https://www.twitter.com/justindujardin"
+        ]
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "http://schema.org",
+        "@type": "WebSite",
+        "name": "DuJardin Consulting, LLC",
+        "image": "https://dujardinconsulting.com/images/avatar.png",
+        "alternateName": "Landing site for DuJardin Consulting, LLC",
+        "url": "https://dujardinconsulting.com/"
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "http://schema.org/",
+        "@type": "Organization",
+        "name": "DuJardin Consulting, LLC",
+        "url": "https://www.dujardinconsulting.com/",
+        "logo": {
+          "@type": "imageObject",
+          "url": "https://www.dujardinconsulting.com/djc-logo.png",
+          "width": "574",
+          "height": "408"
+        }
+      }
+    </script>
+
+    <!-- Google tag (gtag.js) -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-4YTZ2XDQET"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "G-4YTZ2XDQET");
+    </script>
+
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -238,19 +294,6 @@
                   Minimal complexity, maximum reliability
                 </div>
               </div>
-            </div>
-
-            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-6">
-              <h4 class="font-bold text-yellow-800 mb-2">
-                🔑 The Enumeration Property
-              </h4>
-              <p class="text-yellow-700">
-                Unlike traditional neural networks that must search through
-                parameter space, Hill Space lets you
-                <strong>directly calculate optimal weights</strong>. Set weights
-                to [+15, +15] for addition, [+15, -15] for subtraction - no
-                training required.
-              </p>
             </div>
           </div>
         </section>
