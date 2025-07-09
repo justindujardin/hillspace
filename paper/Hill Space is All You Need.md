@@ -13,7 +13,7 @@
 
 We characterize "Hill Space"—the constraint topology created by W = tanh(Ŵ) ⊙ σ(M̂), where ⊙ denotes element-wise multiplication—as a systematic framework for discrete selection in neural networks. This constrained parameter space enables mathematical enumeration: optimal weights for discrete operations can be calculated rather than learned, transforming primitive discovery from optimization-dependent exploration into systematic cartography.
 
-Hill Space creates stable plateaus where neural networks reliably converge to discrete selections like [1,1] for combining operations or [1,-1] for separating operations. These patterns persist across domains—the same discrete selections that enable addition automatically enable multiplication, and subtraction's configuration becomes division's optimal solution.
+Hill Space creates stable plateaus where neural networks reliably converge to discrete weight configurations such as [1,1] and [1,-1], enabling precise mathematical operations. We demonstrate this across arithmetic and trigonometric operations, achieving high precision with deterministic convergence.
 
 We achieve high precision across arithmetic and trigonometric operations, with models converging deterministically regardless of random seed (±0.5 epoch variance across runs). The constraint topology enables aggressive learning rates and extreme extrapolation with accuracy limited primarily by floating-point precision and activation saturation rather than optimization failures.
 
@@ -34,9 +34,7 @@ Hill Space's key property is enumeration: optimal parameters for discrete operat
 
 We demonstrate this methodology using arithmetic and trigonometric operations as our test domain. These provide clean, interpretable examples where "correct" answers are unambiguous, making them ideal for characterizing Hill Space's properties. Mathematical operations also offer the advantage of extreme extrapolation testing—we can verify that learned selections work correctly far beyond training ranges.
 
-The constraint topology creates stable plateaus where neural networks reliably converge to discrete mathematical selections. We observe systematic patterns: [1,1] weights consistently enable combining operations (addition, multiplication), while [1,-1] enables separating operations (subtraction, division). These relationships suggest that discovering one operation's weight signature can predict related operations across different mathematical domains.
-
-This systematic behavior enables a new approach to primitive discovery. Rather than training multiple models and hoping they converge to useful operations, we can enumerate possible weight configurations, test what mathematical transformations emerge, then verify trainability. This transforms the exploration of discrete selection spaces from exponential search problems into linear enumeration tasks.
+The constraint topology creates stable plateaus where neural networks reliably converge to discrete mathematical selections. This enables a new approach to primitive discovery: rather than training multiple models and hoping they converge to useful operations, we can enumerate possible weight configurations, test what mathematical transformations emerge, then verify trainability. This transforms the exploration of discrete selection spaces from exponential search problems into linear enumeration tasks.
 
 This work establishes Hill Space as a systematic approach to 2-dimensional discrete selection problems, demonstrated through mathematical operations requiring 2 parameters for selection. The methodology applies to discrete selection problems sharing these structural properties: enumerable optimal solutions and primitive-expressible transformations.
 
@@ -80,46 +78,16 @@ The bounce-back case suggests the need for a different primitive *or space* form
 
 Hill Space excels at **discrete selection tasks** but has clear boundaries. The constraint topology functions as a selector mechanism that selects _which_ transformation to apply rather than performing internal computations.
 
-**Ideal for**: Operations expressible as discrete choices between pre-defined transformations using directional flags. Examples include [1,1] for "apply both components in same direction" or [1,-1] for "apply components in opposite directions."
+**Ideal for**: Operations expressible as discrete choices between pre-defined transformations. Hill Space weights naturally converge to values like [1,1], [1,-1], [1,0], and [-1,0], enabling selection between different mathematical operations within each primitive.
 
 **Not Ideal for**: Operations requiring internal computation, continuous regression tasks, and operations requiring weight values that exist near Hill Space's gradient dead zones.
 
 This specialization is a feature, not a bug—Hill Space achieves precision within its domain by focusing exclusively on learnable discrete transformations that can be expressed through unit-scale transformation matrices.
-
-## 2.3 Systematic Selection Patterns
-
-Hill Space's discrete selection reveals **systematic weight patterns** that appear consistent across different domains explored so far. Within 2-dimensional constraint spaces, the topology organizes transformations into families where discovering one operation's weight signature can predict related operations across different primitive formulations.
-
-### 2.3.1 Observed Pattern Families in 2D Spaces
-
-Within 2-dimensional Hill Space, four consistent transformation patterns have emerged across multiple domains:
-
-**Combining Pattern** (weights ≈ [1,1]): Operations that merge inputs in the same direction
-- Arithmetic example: addition (a + b), multiplication (a × b)
-
-**Separating Pattern** (weights ≈ [1,-1]): Operations that merge inputs in opposite directions
-- Arithmetic example: subtraction (a - b), division (a ÷ b)
-
-**Identity Pattern** (weights ≈ [1,0]): Operations that preserve the first input
-- Examples: identity transformation, cosine function
-
-**Negative Pattern** (weights ≈ [-1,0] or [0,-1]): Operations that invert or negate
-- Examples: negation (-a), reciprocal (1/a), sine function
-
-### 2.3.2 Systematic Predictive Discovery
-
-This pattern consistency within 2D spaces enables **constrained systematic exploration**—probing known weight configurations across different primitive formulations. When trigonometric exploration revealed that cosine required the identity pattern [1,0], applying these same weights to other 2D primitives discovered corresponding identity operations.
-
-## 2.4 Enumeration Property
+## 2.3 Enumeration Property
 
 Hill Space's saturation-based discrete selections enable **direct exploration** without optimization. Since optimal discrete operations require specific binary selections, their optimal weights can be calculated rather than learned.
 
 **Enumeration Strategy**: For any primitive formulation, optimal weights can be directly set to saturation values corresponding to desired discrete selections. While we recommend ±15 for guaranteed deep saturation, in practice PyTorch's floating-point representation results in tanh reaching 1.0 at values ≥6 and sigmoid at values ≥10 (for both float32 and float64), as values closer than machine epsilon to 1.0 are represented as exactly 1.0:
-
-- [+15, +15] for combining operations
-- [+15, -15] for separating operations
-- [+15, 0] for identity operations
-- [-15, 0] for negation/inversion operations
 
 **Immediate Discovery**: This transforms primitive exploration from training-dependent optimization into systematic probing. Set the theoretically optimal weights, test what transformation emerges, then verify trainability through standard optimization.
 
@@ -127,7 +95,7 @@ Hill Space's saturation-based discrete selections enable **direct exploration** 
 
 **Research Methodology**: The enumeration property provides a systematic framework for Hill Space exploration: establish operation existence through direct weight setting, characterize the transformation, then demonstrate trainability. This approach scales linearly with target operations rather than exponentially with weight dimensions.
 
-## 2.5 Snapping Activations
+## 2.4 Snapping Activations
 
 Hill Space relies on tanh and sigmoid functions reaching saturation values for perfect discrete selection. When functions don't achieve exact saturation, small approximation errors can accumulate. We address this through snapping activations that map near-saturated values to exact targets:
 
@@ -154,7 +122,7 @@ def snapping_sigmoid(x, precision_threshold=1e-6):
 *While we have not extensively studied the shift in learning dynamics introduced by snapping activations, significant convergence acceleration was observed during optimization. Snapping can be applied during training for guaranteed exact discrete values, or deployed only during inference to preserve standard gradient flow while achieving exact results in deployment.*
 # 3. Hill Space Mathematical Primitives
 
-We demonstrate Hill Space's discrete selection capabilities using mathematical primitives as our test domain. Building on NALU's [Trask et al., 2018] foundational additive and exponential primitives, we show these operations achieve high precision through Hill Space's constraint topology. We then introduce two novel trigonometric primitives, testing the generality of the discrete selection framework and revealing systematic relationships across different operational domains.
+We demonstrate Hill Space's discrete selection capabilities using mathematical primitives as our test domain. Building on NALU's [Trask et al., 2018] foundational additive and exponential primitives, we show these operations achieve high precision through Hill Space's constraint topology. We then introduce two novel trigonometric primitives, testing the generality of the discrete selection framework.
 
 Mathematical operations provide an ideal testing ground for Hill Space because they have unambiguous correct answers, enabling clear validation of the discrete selection methodology across different primitive formulations.
 
@@ -307,7 +275,7 @@ if __name__ == "__main__":
     main()
 ```
 
-*NOTE: This conceptual implementation uses float16 weights and standard exponentiation for simplicity. For production precision, apply the Complex128 optimizations and snapping activations described in Sections 3.2 and 2.5.*
+*NOTE: This conceptual implementation uses float16 weights and standard exponentiation for simplicity. For production precision, apply the Complex128 optimizations and snapping activations described in Sections 3.2 and 2.4.*
 ### 4.1.2 Enumeration Validation
 
 This implementation demonstrates Hill Space's core theoretical property: when we understand the constraint topology, optimal parameters become calculable. The saturated weights [±15, ±15] reliably produce discrete selections that approach [±1.0, ±1.0] asymptotically, reaching values like 0.999999+ that enable precise arithmetic operations.
@@ -543,8 +511,6 @@ We set out to understand why neural networks struggle with arithmetic and discov
 Our key contributions:
 
 **Enumeration Property**: Optimal weights for discrete operations can be calculated rather than learned, transforming primitive discovery from training-dependent exploration to direct mathematical calculation.
-
-**Systematic Weight Patterns**: Consistent patterns emerge across operations—[1,1] enables addition/multiplication, [1,-1] enables subtraction/division—suggesting fundamental organizational principles in discrete selection.
 
 **Exponential Primitive Stabilization**: Complex128 arithmetic eliminates catastrophic precision loss in exponential operations (reducing error by 15 orders of magnitude compared to log-space methods), enabling reliable multiplication and division at machine precision.
 
