@@ -79,15 +79,15 @@ class MathyUnit(torch.nn.Module):
         self.W_lnegative_hat = self._new_parameter()
         self.M_lnegative_hat = self._new_parameter()
 
-        # 4 parameter transformations for Trigonometric product operations
-        self.W_cos_sub_hat = self._new_parameter(4)  # cos(θ₁-θ₂)
-        self.M_cos_sub_hat = self._new_parameter(4)
-        self.W_sin_sub_hat = self._new_parameter(4)  # sin(θ₁-θ₂)
-        self.M_sin_sub_hat = self._new_parameter(4)
-        self.W_cos_add_hat = self._new_parameter(4)  # cos(θ₁+θ₂)
-        self.M_cos_add_hat = self._new_parameter(4)
-        self.W_sin_add_hat = self._new_parameter(4)  # sin(θ₁+θ₂)
-        self.M_sin_add_hat = self._new_parameter(4)
+        # Trigonometric product operations
+        self.W_cos_sub_hat = self._new_parameter()  # cos(θ₁-θ₂)
+        self.M_cos_sub_hat = self._new_parameter()
+        self.W_sin_sub_hat = self._new_parameter()  # sin(θ₁-θ₂)
+        self.M_sin_sub_hat = self._new_parameter()
+        self.W_cos_add_hat = self._new_parameter()  # cos(θ₁+θ₂)
+        self.M_cos_add_hat = self._new_parameter()
+        self.W_sin_add_hat = self._new_parameter()  # sin(θ₁+θ₂)
+        self.M_sin_add_hat = self._new_parameter()
 
         # Set config for saving/loading
         self.config: dict[str, str | int | float] = {
