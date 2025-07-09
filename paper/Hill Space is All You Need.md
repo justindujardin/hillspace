@@ -38,7 +38,7 @@ The constraint topology creates stable plateaus where neural networks reliably c
 
 This systematic behavior enables a new approach to primitive discovery. Rather than training multiple models and hoping they converge to useful operations, we can enumerate possible weight configurations, test what mathematical transformations emerge, then verify trainability. This transforms the exploration of discrete selection spaces from exponential search problems into linear enumeration tasks.
 
-This work establishes Hill Space as a systematic approach to low-dimensional discrete selection problems, demonstrated through mathematical operations requiring 2-4 parameter selections. The methodology applies to discrete selection problems sharing these structural properties: enumerable optimal solutions and primitive-expressible transformations.
+This work establishes Hill Space as a systematic approach to 2-dimensional discrete selection problems, demonstrated through mathematical operations requiring 2 parameters for selection. The methodology applies to discrete selection problems sharing these structural properties: enumerable optimal solutions and primitive-expressible transformations.
 
 # 2. Hill Space: A Framework for Discrete Selection
 
@@ -58,7 +58,7 @@ We term this constrained parameter space "Hill Space" in recognition of Felix Hi
 
 Optimization consistently converges to saturation regions that produce stable discrete selections. The constraint topology creates large stable zones where tanh and sigmoid functions achieve near-unity values (typically 0.999999+), with some cases converging so deeply into saturation that effective weights reach exactly 1.0 despite the theoretical bounds of the activation functions.
 
-**Overfitting Immunity**: With only 2-4 parameters per operation, models fundamentally lack capacity to memorize training patterns. This relaxes traditional deep learning concerns: reduced need for data shuffling, regularization techniques, and validation monitoring. Improving training loss becomes a strong indicator of convergence toward true discrete selection rather than potential overfitting.
+**Overfitting Immunity**: With only 2 parameters per operation, models fundamentally lack capacity to memorize training patterns. This relaxes traditional deep learning concerns: reduced need for data shuffling, regularization techniques, and validation monitoring. Improving training loss becomes a strong indicator of convergence toward true discrete selection rather than potential overfitting.
 
 **Deterministic Convergence**: Correct primitive formulations lead to precise discrete selections regardless of random initialization. Different starting points may follow different optimization paths, but all converge to nearly identical solutions, making convergence nearly inescapable with proper primitive design.
 
@@ -106,11 +106,9 @@ Within 2-dimensional Hill Space, four consistent transformation patterns have em
 **Negative Pattern** (weights ≈ [-1,0] or [0,-1]): Operations that invert or negate
 - Examples: negation (-a), reciprocal (1/a), sine function
 
-### 2.3.2 Limited Predictive Discovery
+### 2.3.2 Systematic Predictive Discovery
 
 This pattern consistency within 2D spaces enables **constrained systematic exploration**—probing known weight configurations across different primitive formulations. When trigonometric exploration revealed that cosine required the identity pattern [1,0], applying these same weights to other 2D primitives discovered corresponding identity operations.
-
-**Dimensional Uncertainty**: The 4-dimensional trigonometric product operations each require independent weights, suggesting that higher-dimensional spaces may follow entirely different organizational principles. The systematic patterns observed in 2D Hill Space may not persist as dimensionality grows, and the number of stable plateaus could change dramatically with constraint space complexity.
 
 ## 2.4 Enumeration Property
 
@@ -163,6 +161,7 @@ Mathematical operations provide an ideal testing ground for Hill Space because t
 ## 3.1 Additive Primitive
 
 The additive primitive demonstrates Hill Space's discrete selection using matrix multiplication for linear operations. Four stable selections emerge: addition [1,1], subtraction [1,-1], identity [1,0], and negation [-1,0].
+
 ![[additive_primitive.svg]]
 
 ```python
@@ -243,23 +242,7 @@ def trigonometric_product_primitive(x, weights):
 
 This primitive achieves high precision for compound operations, demonstrating Hill Space's effectiveness across different selection complexity levels.
 
-## 3.5 Advanced Primitive Construction and Exploration
-
-Building on Hill Space's enumeration property (Section 2.4), primitive discovery becomes systematic for basic 2-dimensional selection spaces. However, more complex primitives requiring higher-dimensional weight spaces present unique construction challenges that extend beyond simple enumeration.
-
-### 3.5.1 Higher-Dimensional Primitives
-
-While 2-dimensional Hill Space enables direct enumeration of the 9 fundamental patterns in {-1, 0, 1}², higher-dimensional primitives present significant scaling challenges. The combinatorial space grows rapidly: 4-dimensional spaces contain 81 possible combinations, and 6-dimensional spaces reach 729 combinations.
-
-More critically, the optimal discrete selections become less obvious in higher dimensions. Unlike basic operations where the optimal pattern is clear ([1,1] for combining), compound operations don't immediately suggest their optimal high-dimensional weight configuration, making systematic enumeration substantially more complex.
-
-### 3.5.2 Dimensional Extrapolation Strategy
-
-The systematic patterns observed in 2D Hill Space suggest that higher-dimensional spaces may contain similar organizational principles, but systematic exploration of these spaces remains an open challenge. The enumeration approach that works elegantly in 2D becomes computationally intensive as dimensionality grows.
-
-Research Frontier: Higher-dimensional selection spaces represent a significant opportunity for extending Hill Space's systematic exploration methodology. Understanding how discrete selection patterns organize in 4D, 6D, and higher-dimensional constraint spaces could reveal substantially richer primitive capabilities while maintaining the principled enumeration approach that makes Hill Space distinctive.
-
-## 3.6 Primitive Design Philosophy
+## 3.5 Primitive Design Philosophy
 
 Hill Space enables two distinct approaches to complex operations: sequential composition of simple selections and direct construction of sophisticated primitives. While sequential approaches like implementing multiplication through repeated addition demonstrate computational completeness, they introduce overhead that limits practical scalability.
 
@@ -504,9 +487,9 @@ Our analysis proceeds in two stages: first establishing the theoretical lower bo
 These results demonstrate that Complex128 arithmetic approaches theoretical optimality: Float64 multiplication shows 5.8e-16 additional error (machine epsilon territory), while log-space methods exhibit catastrophic 10^15 error amplification. Hill Space with Complex128 reaches the fundamental limits of floating-point computation.
 ## 4.5 Weight Initialization Analysis
 
-To validate Hill Space's initialization robustness across all operations and primitives, we conducted systematic evaluation across different initialization scales. **Table 4.3** demonstrates this initialization sensitivity across mathematical operations spanning arithmetic and trigonometry. Models were trained for 10 epochs on the Goldilocks distribution U(1e-8, 10.0) with learning rate 0.1, AdamWScheduleFree [Defazio et al., 2024] optimizer, and batch size 64, then evaluated on extreme extrapolation range U(-1e4, 1e4). Snapping functions used to ensure no error from activations.
+To validate Hill Space's initialization robustness across all operations and primitives, we conducted systematic evaluation across different initialization scales. **Table 4.5** demonstrates this initialization sensitivity across mathematical operations spanning arithmetic and trigonometry. Models were trained for 10 epochs on the Goldilocks distribution U(1e-8, 10.0) with learning rate 0.1, AdamWScheduleFree [Defazio et al., 2024] optimizer, and batch size 64, then evaluated on extreme extrapolation range U(-1e4, 1e4). Snapping functions used to ensure no error from activations.
 
-**Table 4.4: Impact of Weight Initialization (10 runs, Extrapolation MSE)**
+**Table 4.5: Impact of Weight Initialization (10 runs, Extrapolation MSE)**
 
 | Operation  |          0 |       0.02 |      1e-08 |        1.0 |        3.0 |       10.0 |
 | ---------- | ---------- | ---------- | ---------- | ---------- | ---------- | ---------- |
@@ -567,7 +550,7 @@ Our key contributions:
 
 The philosophical question of what constitutes "doing math" versus "selecting mathematical transformations" becomes central to understanding Hill Space. If humans don't actually perform multiplication through repeated addition but instead select the appropriate transformation directly, Hill Space may reflect more fundamental cognitive patterns than initially apparent.
 
-We've demonstrated that appropriate constraint design combined with systematic exploration can guide neural networks toward specific discrete capabilities. Higher-dimensional spaces may contain additional operations discoverable through systematic enumeration. Hill Space offers a methodology for finding more such capabilities—in mathematics and potentially beyond.
+We've demonstrated that appropriate constraint design combined with systematic exploration can guide neural networks toward specific discrete capabilities. Hill Space offers a methodology for finding more such capabilities—in mathematics and potentially beyond.
 # 7. Acknowledgments
 
 We thank the broader machine learning community for foundational work in systematic neural selection, particularly the NALU team at DeepMind whose pioneering insights enabled this research direction. We also appreciate Daniel Schlör, Markus Ring, and Andreas Hotho for their iNALU evaluation, whose clearly documented experimental setup enabled meaningful performance benchmarking.
