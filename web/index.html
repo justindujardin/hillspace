@@ -1,21 +1,2185 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Hill Space is All You Need</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: [
+                "Inter",
+                "-apple-system",
+                "BlinkMacSystemFont",
+                "sans-serif",
+              ],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+      }
+      .math {
+        font-family: "Computer Modern", serif;
+      }
+      .gradient-bg {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+      . {
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Ensure Tailwind styles are applied */
+      * {
+        box-sizing: border-box;
+      }
+    </style>
   </head>
-  <body
-    style="
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      background-color: #f0f0f0;
-      font-family: Arial, sans-serif;
-    "
-  >
-    <h1>Hill Space is All You Need</h1>
-    <p>Coming Soon with 100% more DOI 🫠</p>
+  <body class="bg-gray-50">
+    <div class="min-h-screen">
+      <!-- Hero Section -->
+      <div class="gradient-bg text-white py-16">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+          <h1 class="text-5xl font-bold mb-4">Hill Space is All You Need</h1>
+          <p class="text-xl mb-8 text-blue-100">
+            The constraint topology that transforms discrete selection from
+            optimization-dependent exploration into systematic mathematical
+            cartography
+          </p>
+
+          <!-- Hero Image Placeholder -->
+          <div class="rounded-lg p-8 mb-8 max-w-2xl mx-auto">
+            <img
+              src="hill_space.png"
+              alt="Hill Space Visualization"
+              class="w-full"
+            />
+          </div>
+
+          <div class="flex justify-center space-x-4">
+            <a
+              href="#"
+              class="bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors"
+            >
+              📄 Read Full Paper (PDF)
+            </a>
+            <a
+              href="https://github.com/justindujardin/hillspace"
+              class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+            >
+              💻 View Code
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="max-w-6xl mx-auto px-6 py-12">
+        <!-- Introduction -->
+        <section class="mb-16">
+          <h2 class="text-3xl font-bold mb-6">
+            What if neural networks were excellent at math?
+          </h2>
+          <p class="text-lg mb-6 leading-relaxed">
+            Most neural networks struggle with basic arithmetic. They
+            approximate, they fail on extrapolation, and they're inconsistent.
+            But what if there was a way to make them
+            <em>systematically reliable</em> at discrete selection tasks?
+          </p>
+          <div class="">
+            <div class="bg-blue-50 border-l-4 border-blue-400 p-6 mb-6">
+              <h3 class="font-bold text-blue-800 mb-2">
+                The Hill Space Discovery
+              </h3>
+              <p class="text-blue-700">
+                When understood and used properly, the constraint
+                <span class="math font-mono bg-blue-100 px-2 py-1 rounded"
+                  >W = tanh(Ŵ) ⊙ σ(M̂)</span
+                >
+                (introduced in NALU by
+                <a href="https://arxiv.org/abs/1808.00508">Trask et al. 2018</a
+                >) creates a unique parameter topology where optimal weights for
+                discrete operations can be
+                <strong>calculated rather than learned</strong>. During
+                training, they're able to converge with extreme speed and
+                reliability towards the optimal solution.
+              </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+              <div class="bg-green-50 p-6 rounded-lg">
+                <h4 class="font-bold text-green-800 mb-3">
+                  ✅ What Hill Space Enables
+                </h4>
+                <ul class="text-green-700 space-y-2">
+                  <li>
+                    • High precision arithmetic limited primarily by
+                    floating-point precision
+                  </li>
+                  <li>• Extreme extrapolation (1000x+ training range)</li>
+                  <li>• Deterministic convergence</li>
+                  <li>• Systematic weight patterns</li>
+                </ul>
+              </div>
+              <div class="bg-purple-50 p-6 rounded-lg">
+                <h4 class="font-bold text-purple-800 mb-3">🎯 Key Insight</h4>
+                <ul class="text-purple-700 space-y-2">
+                  <li>• <strong>[1,1]</strong> → combining (add, multiply)</li>
+                  <li>
+                    • <strong>[1,-1]</strong> → separating (subtract, divide)
+                  </li>
+                  <li>• <strong>[1,0]</strong> → identity operations</li>
+                  <li>• <strong>[-1,0]</strong> → negation/inversion</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Interactive Primitives -->
+        <section class="mb-16">
+          <h2 class="text-3xl font-bold mb-6">
+            Experience Hill Space: Interactive Primitives
+          </h2>
+          <p class="text-lg mb-16 text-gray-600">
+            It's difficult to imagine that something so seemingly complex would
+            have such a simple solution. Play with these widgets to understand
+            how constraint topology enables systematic discrete selection. Each
+            primitive demonstrates machine-precision mathematics through simple
+            weight configurations.
+          </p>
+
+          <!-- Additive Primitive -->
+          <div class="mb-12">
+            <h2 class="text-3xl font-bold my-6">Additive Primitive</h2>
+            <p class="text-lg mb-16 text-gray-600">
+              How matrix multiplication with specific weights performs
+              mathematical operations
+            </p>
+            <div id="additive-primitive-widget" class="overflow-hidden">
+              <!-- Widget will be rendered here -->
+            </div>
+          </div>
+          <!-- Exponential Primitive -->
+          <div class="mb-12">
+            <h2 class="text-3xl font-bold my-6">Exponential Primitive</h2>
+            <p class="text-lg mb-4 text-gray-600">
+              How exponential primitives with specific weights perform
+              operations
+            </p>
+            <div id="exponential-primitive-widget" class="overflow-hidden">
+              <!-- Widget will be rendered here -->
+            </div>
+          </div>
+          <!-- Unit Circle Primitive -->
+          <div class="mb-12">
+            <h2 class="text-3xl font-bold my-6">Unit Circle Primitive</h2>
+            <p class="text-lg mb-4 text-gray-600">
+              How projecting inputs onto the unit circle allows for
+              trigonometric operations
+            </p>
+            <div id="unit-circle-primitive-widget" class="overflow-hidden">
+              <!-- Widget will be rendered here -->
+            </div>
+          </div>
+
+          <!-- Trigonometric Products Primitive -->
+          <div class="mb-12">
+            <h2 class="text-3xl font-bold my-6">
+              Trigonometric Products Primitive
+            </h2>
+            <p class="text-lg mb-4 text-gray-600">
+              How four fundamental trigonometric products enable trigonometric
+              operations
+            </p>
+            <div
+              id="trigonometric-products-primitive-widget"
+              class="overflow-hidden"
+            >
+              <!-- Widget will be rendered here -->
+            </div>
+          </div>
+        </section>
+
+        <!-- Key Results -->
+        <section class="mb-16">
+          <h2 class="text-3xl font-bold mb-6">Why This Matters</h2>
+          <div class="bg-white rounded-lg p-8">
+            <div class="grid md:grid-cols-3 gap-8 mb-8">
+              <div class="text-center">
+                <div class="text-4xl font-bold text-blue-600 mb-2">10⁻¹⁶</div>
+                <div class="text-gray-600">Error magnitude</div>
+                <div class="text-sm text-gray-500 mt-2">
+                  Machine precision limited only by floating-point
+                  representation
+                </div>
+              </div>
+              <div class="text-center">
+                <div class="text-4xl font-bold text-green-600 mb-2">1000x+</div>
+                <div class="text-gray-600">Extrapolation range</div>
+                <div class="text-sm text-gray-500 mt-2">
+                  Reliable performance far beyond training distribution
+                </div>
+              </div>
+              <div class="text-center">
+                <div class="text-4xl font-bold text-purple-600 mb-2">2-4</div>
+                <div class="text-gray-600">Parameters per operation</div>
+                <div class="text-sm text-gray-500 mt-2">
+                  Minimal complexity, maximum reliability
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-6">
+              <h4 class="font-bold text-yellow-800 mb-2">
+                🔑 The Enumeration Property
+              </h4>
+              <p class="text-yellow-700">
+                Unlike traditional neural networks that must search through
+                parameter space, Hill Space lets you
+                <strong>directly calculate optimal weights</strong>. Set weights
+                to [+15, +15] for addition, [+15, -15] for subtraction - no
+                training required.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Call to Action -->
+        <section
+          class="text-center bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg p-12"
+        >
+          <h2 class="text-3xl font-bold mb-4">
+            Ready to explore systematic discrete selection?
+          </h2>
+          <p class="text-xl mb-8 text-blue-100">
+            Dive into the full paper for mathematical proofs, comprehensive
+            experiments, and implementation details.
+          </p>
+          <div class="flex justify-center space-x-4">
+            <a
+              href="#"
+              class="bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold hover:bg-blue-50 transition-colors"
+            >
+              📖 Read the Full Paper
+            </a>
+            <a
+              href="https://github.com/justindujardin/hillspace"
+              class="bg-blue-700 text-white px-8 py-4 rounded-lg font-semibold hover:bg-blue-800 transition-colors"
+            >
+              🚀 Try the Code
+            </a>
+          </div>
+        </section>
+      </div>
+
+      <!-- Footer -->
+      <footer class="bg-gray-800 text-white py-8 mt-16">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+          <p class="mb-4">
+            <strong>Hill Space is All You Need</strong> by Justin DuJardin
+          </p>
+          <p class="text-gray-400">
+            Transforming discrete selection from optimization-dependent
+            exploration into systematic mathematical cartography
+          </p>
+        </div>
+      </footer>
+    </div>
+
+    <!-- Load and render the additive primitive widget -->
+    <script type="text/babel">
+      // Additive Primitive Widget Component (from your provided code)
+      const AdditivePrimitiveWidget = () => {
+        const [input1, setInput1] = React.useState(40);
+        const [input2, setInput2] = React.useState(2);
+        const [weight1, setWeight1] = React.useState(1.0);
+        const [weight2, setWeight2] = React.useState(1.0);
+        const [lastPreset, setLastPreset] = React.useState("add");
+
+        const result = input1 * weight1 + input2 * weight2;
+        const step1Result = input1 * weight1;
+        const step2Result = input2 * weight2;
+
+        // Calculate ground truth based on last preset clicked
+        let groundTruth = null;
+        let operationType = "";
+        let operationFormula = "";
+        let isKnownOperation = false;
+
+        // Determine operation type based on current weights
+        if (Math.abs(weight1 - 1.0) < 0.1 && Math.abs(weight2 - 1.0) < 0.1) {
+          operationType = "Addition";
+          operationFormula = `${input1} + ${input2}`;
+        } else if (
+          Math.abs(weight1 - 1.0) < 0.1 &&
+          Math.abs(weight2 - -1.0) < 0.1
+        ) {
+          operationType = "Subtraction";
+          operationFormula = `${input1} - ${input2}`;
+        } else if (
+          Math.abs(weight1 - -1.0) < 0.1 &&
+          Math.abs(weight2 - 0.0) < 0.1
+        ) {
+          operationType = "Negation";
+          operationFormula = `-${input1}`;
+        } else if (
+          Math.abs(weight1 - 1.0) < 0.1 &&
+          Math.abs(weight2 - 0.0) < 0.1
+        ) {
+          operationType = "Identity";
+          operationFormula = `${input1}`;
+        } else {
+          operationType = "Linear Combination";
+          operationFormula = `${weight1} × ${input1} + ${weight2} × ${input2}`;
+        }
+
+        // Calculate ground truth based on last preset
+        if (lastPreset === "add") {
+          groundTruth = input1 + input2;
+          isKnownOperation = true;
+        } else if (lastPreset === "subtract") {
+          groundTruth = input1 - input2;
+          isKnownOperation = true;
+        } else if (lastPreset === "negation") {
+          groundTruth = -input1;
+          isKnownOperation = true;
+        } else if (lastPreset === "identity") {
+          groundTruth = input1;
+          isKnownOperation = true;
+        }
+
+        const error = isKnownOperation ? Math.abs(result - groundTruth) : null;
+
+        return (
+          <div className="w-full mt-4 bg-white rounded-lg p-4">
+            {/* Controls */}
+            <div className="">
+              <h3 className="text-lg font-semibold text-gray-800">
+                Customize Values
+              </h3>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Input 1
+                  </label>
+                  <input
+                    type="number"
+                    step="0.05"
+                    value={input1}
+                    onChange={(e) => setInput1(parseFloat(e.target.value) || 0)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Input 2
+                  </label>
+                  <input
+                    type="number"
+                    step="0.05"
+                    value={input2}
+                    onChange={(e) => setInput2(parseFloat(e.target.value) || 0)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Weight 1
+                  </label>
+                  <input
+                    type="number"
+                    step="0.05"
+                    value={weight1}
+                    onChange={(e) =>
+                      setWeight1(parseFloat(e.target.value) || 0)
+                    }
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Weight 2
+                  </label>
+                  <input
+                    type="number"
+                    step="0.05"
+                    value={weight2}
+                    onChange={(e) =>
+                      setWeight2(parseFloat(e.target.value) || 0)
+                    }
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                  />
+                </div>
+              </div>
+
+              {/* Preset buttons */}
+              <div className="mb-4">
+                <div className="text-sm font-medium text-gray-700 mb-2">
+                  Quick Presets:
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={() => {
+                      setWeight1(1.0);
+                      setWeight2(1.0);
+                      setLastPreset("add");
+                    }}
+                    className="bg-blue-100 hover:bg-blue-200 text-blue-800 text-sm py-1 px-3 rounded transition-colors"
+                  >
+                    Addition (+)
+                  </button>
+                  <button
+                    onClick={() => {
+                      setWeight1(1.0);
+                      setWeight2(-1.0);
+                      setLastPreset("subtract");
+                    }}
+                    className="bg-green-100 hover:bg-green-200 text-green-800 text-sm py-1 px-3 rounded transition-colors"
+                  >
+                    Subtraction (-)
+                  </button>
+                  <button
+                    onClick={() => {
+                      setWeight1(-1.0);
+                      setWeight2(0.0);
+                      setLastPreset("negation");
+                    }}
+                    className="bg-purple-100 hover:bg-purple-200 text-purple-800 text-sm py-1 px-3 rounded transition-colors"
+                  >
+                    Negation (-input1)
+                  </button>
+                  <button
+                    onClick={() => {
+                      setWeight1(1.0);
+                      setWeight2(0.0);
+                      setLastPreset("identity");
+                    }}
+                    className="bg-orange-100 hover:bg-orange-200 text-orange-800 text-sm py-1 px-3 rounded transition-colors"
+                  >
+                    Identity (input1)
+                  </button>
+                </div>
+              </div>
+
+              {/* Visualization */}
+              <div className="p-6">
+                <div className="flex items-center justify-between">
+                  {/* Main equation layout */}
+                  <div className="flex items-center justify-center space-x-4 mb-8 max-w-xl mx-auto">
+                    {/* Input vector */}
+                    <div className="text-center">
+                      <div className="text-sm text-gray-500 mb-2">
+                        Input Vector
+                      </div>
+                      <div className="flex items-center">
+                        <span className="text-2xl font-mono">[</span>
+                        <div className="grid grid-cols-1 gap-1 mx-2">
+                          <div className="bg-blue-100 px-3 py-2 rounded text-xl font-mono text-blue-800">
+                            {input1}
+                          </div>
+                          <div className="bg-blue-100 px-3 py-2 rounded text-xl font-mono text-blue-800">
+                            {input2}
+                          </div>
+                        </div>
+                        <span className="text-2xl font-mono">]</span>
+                      </div>
+                      <div className="text-xs text-gray-400 mt-1">1×2</div>
+                    </div>
+
+                    {/* Multiplication symbol */}
+                    <div className="text-3xl font-bold text-gray-700">×</div>
+
+                    {/* Weight vector */}
+                    <div className="text-center">
+                      <div className="text-sm text-gray-500 mb-2">
+                        Weight Vector
+                      </div>
+                      <div className="flex items-center">
+                        <span className="text-2xl font-mono">[</span>
+                        <div className="grid grid-cols-2 gap-1 mx-2">
+                          <div className="bg-green-100 px-3 py-2 rounded text-xl font-mono text-green-800">
+                            {weight1}
+                          </div>
+                          <div className="bg-green-100 px-3 py-2 rounded text-xl font-mono text-green-800">
+                            {weight2}
+                          </div>
+                        </div>
+                        <span className="text-2xl font-mono">]</span>
+                      </div>
+                      <div className="text-xs text-gray-400 mt-1">2×1</div>
+                      <div className="text-xs text-green-600 mt-1 font-medium">
+                        from Hill Space
+                      </div>
+                    </div>
+
+                    {/* Equals */}
+                    <div className="text-3xl font-bold text-gray-700">=</div>
+
+                    {/* Result with comparison */}
+                    <div className="text-center">
+                      <div className="text-sm text-gray-500 mb-2">
+                        {operationType}
+                      </div>
+                      <div className="space-y-2">
+                        {/* Model prediction */}
+                        <div>
+                          <div className="text-xs text-gray-400 mb-1">
+                            Model Prediction
+                          </div>
+                          <div className="bg-purple-100 px-4 py-3 rounded text-xl font-mono text-purple-800">
+                            {result.toFixed(6)}
+                          </div>
+                        </div>
+
+                        {/* Ground truth comparison */}
+                        {isKnownOperation && (
+                          <div>
+                            <div className="text-xs text-gray-400 mb-1">
+                              Calculator Says ({lastPreset})
+                            </div>
+                            <div className="bg-blue-100 px-4 py-3 rounded text-xl font-mono text-blue-800">
+                              {groundTruth.toFixed(6)}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Error display */}
+                        {error !== null && (
+                          <div>
+                            <div className="text-xs text-gray-400 mb-1">
+                              Error
+                            </div>
+                            <div
+                              className={`px-4 py-2 rounded text-lg font-mono ${
+                                error < 0.000001
+                                  ? "bg-green-100 text-green-800"
+                                  : error < 0.001
+                                  ? "bg-yellow-100 text-yellow-800"
+                                  : "bg-red-100 text-red-800"
+                              }`}
+                            >
+                              {error < 0.000001
+                                ? error.toExponential(2)
+                                : error.toFixed(6)}
+                            </div>
+                            <div
+                              className={`text-xs mt-1 ${
+                                error < 0.000001
+                                  ? "text-green-600"
+                                  : error < 0.001
+                                  ? "text-yellow-600"
+                                  : "text-red-600"
+                              }`}
+                            >
+                              {error < 0.000001
+                                ? "Machine precision!"
+                                : error < 0.001
+                                ? "Close approximation"
+                                : "Weights need tuning"}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="text-xs text-purple-600 mt-2 font-medium">
+                        {operationFormula}
+                      </div>
+                      <div className="text-xs text-gray-400 mt-1">
+                        from Hill Space
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Step-by-step breakdown */}
+                  <div className="bg-gray-50 rounded-lg p-6 mb-6 max-w-md justify-center mx-auto">
+                    <h3 className="font-semibold text-gray-800 mb-4">
+                      Step-by-Step Solution:
+                    </h3>
+
+                    <div className="space-y-4">
+                      {/* Step 1 */}
+                      <div className="flex items-center space-x-3">
+                        <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">
+                          1
+                        </div>
+                        <div className="flex items-center space-x-2 whitespace-nowrap">
+                          <span className="font-mono text-lg inline-flex items-center space-x-1">
+                            <span className="bg-blue-200 px-2 py-1 rounded">
+                              {input1}
+                            </span>
+                            <span>×</span>
+                            <span className="bg-green-200 px-2 py-1 rounded">
+                              {weight1}
+                            </span>
+                            <span>=</span>
+                            <span className="bg-yellow-200 px-2 py-1 rounded">
+                              {step1Result.toFixed(1)}
+                            </span>
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Step 2 */}
+                      <div className="flex items-center space-x-3">
+                        <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">
+                          2
+                        </div>
+                        <div className="flex items-center space-x-2 whitespace-nowrap">
+                          <span className="font-mono text-lg inline-flex items-center space-x-1">
+                            <span className="bg-blue-200 px-2 py-1 rounded">
+                              {input2}
+                            </span>
+                            <span>×</span>
+                            <span className="bg-green-200 px-2 py-1 rounded">
+                              {weight2}
+                            </span>
+                            <span>=</span>
+                            <span className="bg-yellow-200 px-2 py-1 rounded">
+                              {step2Result.toFixed(1)}
+                            </span>
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Step 3 */}
+                      <div className="flex items-center space-x-3">
+                        <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">
+                          3
+                        </div>
+                        <div className="flex items-center space-x-2 whitespace-nowrap">
+                          <span className="font-mono text-lg inline-flex items-center space-x-1">
+                            <span className="bg-yellow-200 px-2 py-1 rounded">
+                              {step1Result.toFixed(1)}
+                            </span>
+                            <span>+</span>
+                            <span className="bg-yellow-200 px-2 py-1 rounded">
+                              {step2Result.toFixed(1)}
+                            </span>
+                            <span>=</span>
+                            <span className="bg-purple-200 px-2 py-1 rounded font-bold">
+                              {result.toFixed(1)}
+                            </span>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      };
+
+      // Render the widget
+      var root = ReactDOM.createRoot(
+        document.getElementById("additive-primitive-widget")
+      );
+      root.render(<AdditivePrimitiveWidget />);
+    </script>
+
+    <script type="text/babel">
+      const ExponentialPrimitiveWidget = () => {
+        const [input1, setInput1] = React.useState(1.33);
+        const [input2, setInput2] = React.useState(2.173);
+        const [weight1, setWeight1] = React.useState(1.0);
+        const [weight2, setWeight2] = React.useState(1.0);
+        const [lastPreset, setLastPreset] = React.useState("multiply");
+
+        const step1Result = Math.pow(input1, weight1);
+        const step2Result = Math.pow(input2, weight2);
+        const result = step1Result * step2Result;
+
+        // Calculate ground truth based on last preset clicked
+        let groundTruth = null;
+        let operationType = "";
+        let operationFormula = "";
+        let isKnownOperation = false;
+
+        // Determine operation type based on current weights
+        if (Math.abs(weight1 - 1.0) < 0.1 && Math.abs(weight2 - 1.0) < 0.1) {
+          operationType = "Multiplication";
+          operationFormula = `${input1} × ${input2}`;
+        } else if (
+          Math.abs(weight1 - 1.0) < 0.1 &&
+          Math.abs(weight2 - -1.0) < 0.1
+        ) {
+          operationType = "Division";
+          operationFormula = `${input1} ÷ ${input2}`;
+        } else if (
+          Math.abs(weight1 - 1.0) < 0.1 &&
+          Math.abs(weight2 - 0.0) < 0.1
+        ) {
+          operationType = "Identity";
+          operationFormula = `${input1}^1 × ${input2}^0 = ${input1}`;
+        } else if (
+          Math.abs(weight1 - -1.0) < 0.1 &&
+          Math.abs(weight2 - 0.0) < 0.1
+        ) {
+          operationType = "Reciprocal";
+          operationFormula = `${input1}^-1 × ${input2}^0 = 1/${input1}`;
+        } else {
+          operationType = "Exponential Combination";
+          operationFormula = `${input1}^${weight1} × ${input2}^${weight2}`;
+        }
+
+        // Calculate ground truth based on last preset
+        if (lastPreset === "multiply") {
+          groundTruth = input1 * input2;
+          isKnownOperation = true;
+        } else if (lastPreset === "divide") {
+          groundTruth = input1 / input2;
+          isKnownOperation = true;
+        } else if (lastPreset === "identity") {
+          groundTruth = input1;
+          isKnownOperation = true;
+        } else if (lastPreset === "reciprocal") {
+          groundTruth = 1 / input1;
+          isKnownOperation = true;
+        }
+
+        const error = isKnownOperation ? Math.abs(result - groundTruth) : null;
+
+        return (
+          <div className="w-full mt-4">
+            <div className="bg-white rounded-lg p-4">
+              {/* Controls */}
+              <div className="p-4">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                  Customize Values
+                </h3>
+
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Input 1
+                    </label>
+                    <input
+                      type="number"
+                      value={input1}
+                      onChange={(e) =>
+                        setInput1(parseFloat(e.target.value) || 0)
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Input 2
+                    </label>
+                    <input
+                      type="number"
+                      value={input2}
+                      onChange={(e) =>
+                        setInput2(parseFloat(e.target.value) || 0)
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Weight 1
+                    </label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      value={weight1}
+                      onChange={(e) =>
+                        setWeight1(parseFloat(e.target.value) || 0)
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Weight 2
+                    </label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      value={weight2}
+                      onChange={(e) =>
+                        setWeight2(parseFloat(e.target.value) || 0)
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                    />
+                  </div>
+                </div>
+
+                {/* Preset buttons */}
+                <div className="mb-4">
+                  <div className="text-sm font-medium text-gray-700 mb-2">
+                    Quick Presets:
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      onClick={() => {
+                        setWeight1(1.0);
+                        setWeight2(1.0);
+                        setLastPreset("multiply");
+                      }}
+                      className="bg-blue-100 hover:bg-blue-200 text-blue-800 text-sm py-1 px-3 rounded transition-colors"
+                    >
+                      Multiplication (×)
+                    </button>
+                    <button
+                      onClick={() => {
+                        setWeight1(1.0);
+                        setWeight2(-1.0);
+                        setLastPreset("divide");
+                      }}
+                      className="bg-green-100 hover:bg-green-200 text-green-800 text-sm py-1 px-3 rounded transition-colors"
+                    >
+                      Division (÷)
+                    </button>
+                    <button
+                      onClick={() => {
+                        setWeight1(1.0);
+                        setWeight2(0.0);
+                        setLastPreset("identity");
+                      }}
+                      className="bg-purple-100 hover:bg-purple-200 text-purple-800 text-sm py-1 px-3 rounded transition-colors"
+                    >
+                      Identity (input1)
+                    </button>
+                    <button
+                      onClick={() => {
+                        setWeight1(-1.0);
+                        setWeight2(0.0);
+                        setLastPreset("reciprocal");
+                      }}
+                      className="bg-orange-100 hover:bg-orange-200 text-orange-800 text-sm py-1 px-3 rounded transition-colors"
+                    >
+                      Reciprocal (1/input1)
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Visualization */}
+              <div className="p-6">
+                <div className="flex items-center justify-between">
+                  {/* Main equation */}
+                  <div className="flex flex-col items-center">
+                    <div className="flex items-center justify-center space-x-4 mb-8 max-w-4xl mx-auto">
+                      {/* Input Vector */}
+                      <div className="flex flex-col items-center">
+                        <div className="text-center">
+                          <div className="text-xs text-gray-500 mb-1">
+                            Input Vector
+                          </div>
+                          <div className="flex items-center mb-2">
+                            <span className="text-xl font-mono">[</span>
+                            <div className="flex space-x-1 mx-1">
+                              <div className="bg-blue-100 px-2 py-1 rounded text-lg font-mono text-blue-800">
+                                {input1}
+                              </div>
+                              <div className="bg-blue-100 px-2 py-1 rounded text-lg font-mono text-blue-800">
+                                {input2}
+                              </div>
+                            </div>
+                            <span className="text-xl font-mono">]</span>
+                          </div>
+                        </div>
+
+                        <div className="text-2xl font-bold text-gray-700">
+                          ×
+                        </div>
+
+                        <div className="text-center">
+                          <div className="text-xs text-gray-500 mb-1">
+                            Weight Vector
+                          </div>
+                          <div className="flex items-center mb-2">
+                            <span className="text-xl font-mono">[</span>
+                            <div className="flex space-x-1 mx-1">
+                              <div className="bg-green-100 px-2 py-1 rounded text-lg font-mono text-green-800">
+                                {weight1}
+                              </div>
+                              <div className="bg-green-100 px-2 py-1 rounded text-lg font-mono text-green-800">
+                                {weight2}
+                              </div>
+                            </div>
+                            <span className="text-xl font-mono">]</span>
+                          </div>
+                          <div className="text-xs text-green-600 font-medium">
+                            Hill Space
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="text-2xl text-gray-700">→</div>
+
+                      {/* Exponential Operations */}
+                      <div className="text-center">
+                        <div className="text-xs text-gray-500 mb-1">
+                          Exponential Operations
+                        </div>
+                        <div className="flex items-center space-x-2 mb-2">
+                          <div className="flex items-center">
+                            <div className="bg-blue-100 px-2 py-1 rounded text-lg font-mono text-blue-800">
+                              {input1}
+                            </div>
+                            <span className="text-lg font-bold text-gray-700 mx-1">
+                              ^
+                            </span>
+                            <div className="bg-green-100 px-2 py-1 rounded text-lg font-mono text-green-800">
+                              {weight1}
+                            </div>
+                          </div>
+                          <span className="text-lg font-bold text-gray-700">
+                            ×
+                          </span>
+                          <div className="flex items-center">
+                            <div className="bg-blue-100 px-2 py-1 rounded text-lg font-mono text-blue-800">
+                              {input2}
+                            </div>
+                            <span className="text-lg font-bold text-gray-700 mx-1">
+                              ^
+                            </span>
+                            <div className="bg-green-100 px-2 py-1 rounded text-lg font-mono text-green-800">
+                              {weight2}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="text-xs text-gray-400">
+                          {step1Result.toFixed(1)} × {step2Result.toFixed(1)}
+                        </div>
+                      </div>
+
+                      <div className="text-3xl font-bold text-gray-700">=</div>
+
+                      {/* Result */}
+                      <div className="text-center">
+                        <div className="text-xs text-gray-500 mb-1">
+                          {operationType}
+                        </div>
+                        <div className="space-y-2">
+                          <div>
+                            <div className="text-xs text-gray-400 mb-1">
+                              Model Prediction
+                            </div>
+                            <div className="bg-purple-100 px-4 py-3 rounded text-xl font-mono text-purple-800">
+                              {result.toFixed(6)}
+                            </div>
+                          </div>
+
+                          {isKnownOperation && (
+                            <div>
+                              <div className="text-xs text-gray-400 mb-1">
+                                Calculator Says
+                              </div>
+                              <div className="bg-blue-100 px-4 py-3 rounded text-xl font-mono text-blue-800">
+                                {groundTruth.toFixed(6)}
+                              </div>
+                            </div>
+                          )}
+
+                          {error !== null && (
+                            <div>
+                              <div className="text-xs text-gray-400 mb-1">
+                                Error
+                              </div>
+                              <div
+                                className={`px-4 py-2 rounded text-lg font-mono ${
+                                  error < 0.000001
+                                    ? "bg-green-100 text-green-800"
+                                    : error < 0.001
+                                    ? "bg-yellow-100 text-yellow-800"
+                                    : "bg-red-100 text-red-800"
+                                }`}
+                              >
+                                {error < 0.000001
+                                  ? error.toExponential(2)
+                                  : error.toFixed(6)}
+                              </div>
+                              <div
+                                className={`text-xs mt-1 ${
+                                  error < 0.000001
+                                    ? "text-green-600"
+                                    : error < 0.001
+                                    ? "text-yellow-600"
+                                    : "text-red-600"
+                                }`}
+                              >
+                                {error < 0.000001
+                                  ? "Machine precision!"
+                                  : error < 0.001
+                                  ? "Close approximation"
+                                  : "Significant compounding error"}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="text-xs text-purple-600 mt-2 font-medium">
+                          {operationFormula}
+                        </div>
+                        <div className="text-xs text-gray-400 mt-1">
+                          from Hill Space
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Step-by-step breakdown */}
+                  <div className="bg-gray-50 rounded-lg p-6 mb-6">
+                    <h3 className="text-md font-semibold text-gray-800 mb-4">
+                      Step-by-Step Solution:
+                    </h3>
+
+                    <div className="space-y-4">
+                      <div className="flex items-center space-x-3">
+                        <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">
+                          1
+                        </div>
+                        <div className="flex items-center space-x-2 whitespace-nowrap">
+                          <span className="font-mono text-sm inline-flex items-center space-x-1">
+                            <span className="bg-blue-200 px-2 py-1 rounded">
+                              {input1}
+                            </span>
+                            <span className="text-gray-600">^</span>
+                            <span className="bg-green-200 px-2 py-1 rounded">
+                              {weight1}
+                            </span>
+                            <span>=</span>
+                            <span className="bg-yellow-200 px-2 py-1 rounded">
+                              {step1Result.toFixed(1)}
+                            </span>
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center space-x-3">
+                        <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">
+                          2
+                        </div>
+                        <div className="flex items-center space-x-2 whitespace-nowrap">
+                          <span className="font-mono text-sm inline-flex items-center space-x-1">
+                            <span className="bg-blue-200 px-2 py-1 rounded">
+                              {input2}
+                            </span>
+                            <span className="text-gray-600">^</span>
+                            <span className="bg-green-200 px-2 py-1 rounded">
+                              {weight2}
+                            </span>
+                            <span>=</span>
+                            <span className="bg-yellow-200 px-2 py-1 rounded">
+                              {step2Result.toFixed(1)}
+                            </span>
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center space-x-3">
+                        <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">
+                          3
+                        </div>
+                        <div className="flex items-center space-x-2 whitespace-nowrap">
+                          <span className="font-mono text-sm inline-flex items-center space-x-1">
+                            <span className="bg-yellow-200 px-2 py-1 rounded">
+                              {step1Result.toFixed(1)}
+                            </span>
+                            <span>×</span>
+                            <span className="bg-yellow-200 px-2 py-1 rounded">
+                              {step2Result.toFixed(1)}
+                            </span>
+                            <span>=</span>
+                            <span className="bg-purple-200 px-2 py-1 rounded font-bold">
+                              {result.toFixed(3)}
+                            </span>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      };
+      // Render the widget
+      var root = ReactDOM.createRoot(
+        document.getElementById("exponential-primitive-widget")
+      );
+      root.render(<ExponentialPrimitiveWidget />);
+    </script>
+
+    <script type="text/babel">
+      const UnitCirclePrimitiveWidget = () => {
+        const [input1, setInput1] = React.useState(45);
+        const [input2, setInput2] = React.useState(0); // Not used in unary mode
+        const [weight1, setWeight1] = React.useState(1.0); // cos_sin_selector
+        const [weight2, setWeight2] = React.useState(0.0); // phase_shift multiplier
+        const [lastPreset, setLastPreset] = React.useState("cos");
+
+        // Convert to radians
+        const theta_degrees = input1;
+        const theta_radians = (theta_degrees * Math.PI) / 180;
+
+        // Phase shift
+        const phase_shift = weight2 * Math.PI;
+        const shifted_theta = theta_radians + phase_shift;
+
+        // Compute trig components
+        const cos_component = Math.cos(shifted_theta);
+        const sin_component = Math.sin(shifted_theta);
+
+        // Selection based on weight1
+        const cos_sin_selector = weight1;
+        const result =
+          (cos_component * (1 + cos_sin_selector) +
+            sin_component * (1 - cos_sin_selector)) /
+          2;
+
+        // Calculate ground truth based on last preset clicked
+        let groundTruth = null;
+        let operationType = "";
+        let isKnownOperation = false;
+
+        // Determine operation type based on current weights
+        if (Math.abs(cos_sin_selector - 1.0) < 0.1) {
+          operationType = "cos";
+        } else if (Math.abs(cos_sin_selector - -1.0) < 0.1) {
+          operationType = "sin";
+        } else if (Math.abs(cos_sin_selector) < 0.1) {
+          operationType = "cos+sin mix";
+        } else {
+          operationType = "weighted mix";
+        }
+
+        // Calculate ground truth based on last preset
+        if (lastPreset === "cos") {
+          groundTruth = Math.cos(shifted_theta);
+          isKnownOperation = true;
+        } else if (lastPreset === "sin") {
+          groundTruth = Math.sin(shifted_theta);
+          isKnownOperation = true;
+        }
+
+        const error = isKnownOperation ? Math.abs(result - groundTruth) : null;
+
+        return (
+          <div className="w-full bg-white rounded-lg">
+            <div className="bg-white rounded-lg p-4">
+              {/* Controls */}
+              <div className="p-4">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                  Customize Values
+                </h3>
+
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Angle (degrees)
+                    </label>
+                    <input
+                      type="number"
+                      value={input1}
+                      onChange={(e) =>
+                        setInput1(parseFloat(e.target.value) || 0)
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Input 2 (unused)
+                    </label>
+                    <input
+                      type="number"
+                      value={input2}
+                      onChange={(e) =>
+                        setInput2(parseFloat(e.target.value) || 0)
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md opacity-50 cursor-not-allowed"
+                      disabled
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Cos/Sin Selector
+                    </label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      min="-1"
+                      max="1"
+                      value={weight1}
+                      onChange={(e) =>
+                        setWeight1(parseFloat(e.target.value) || 0)
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                    />
+                    <div className="text-xs text-gray-500 mt-1">
+                      1.0=cos, -1.0=sin, 0.0=mix
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Phase Shift
+                    </label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      value={weight2}
+                      onChange={(e) =>
+                        setWeight2(parseFloat(e.target.value) || 0)
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                    />
+                    <div className="text-xs text-gray-500 mt-1">×π radians</div>
+                  </div>
+                </div>
+
+                {/* Preset buttons */}
+                <div className="mb-4">
+                  <div className="text-sm font-medium text-gray-700 mb-2">
+                    Quick Presets:
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      onClick={() => {
+                        setWeight1(1.0);
+                        setWeight2(0.0);
+                        setLastPreset("cos");
+                      }}
+                      className="bg-blue-100 hover:bg-blue-200 text-blue-800 text-sm py-1 px-3 rounded transition-colors"
+                    >
+                      Cosine
+                    </button>
+                    <button
+                      onClick={() => {
+                        setWeight1(-1.0);
+                        setWeight2(0.0);
+                        setLastPreset("sin");
+                      }}
+                      className="bg-green-100 hover:bg-green-200 text-green-800 text-sm py-1 px-3 rounded transition-colors"
+                    >
+                      Sine
+                    </button>
+                    <button
+                      onClick={() => {
+                        setWeight1(0.0);
+                        setWeight2(0.0);
+                        setLastPreset(null);
+                      }}
+                      className="bg-orange-100 hover:bg-orange-200 text-orange-800 text-sm py-1 px-3 rounded transition-colors"
+                    >
+                      Mixed (cos+sin)/2
+                    </button>
+                    <button
+                      onClick={() => {
+                        setWeight1(1.0);
+                        setWeight2(0.5);
+                        setLastPreset("cos");
+                      }}
+                      className="bg-purple-100 hover:bg-purple-200 text-purple-800 text-sm py-1 px-3 rounded transition-colors"
+                    >
+                      Cosine + Phase Shift
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Visualization */}
+              <div className="bg-white rounded-lg p-6">
+                <div className="space-y-8">
+                  <div className="flex items-center justify-between mb-6">
+                    {/* Main operation display */}
+                    <div className="flex items-center justify-center space-x-6">
+                      {/* Input */}
+                      <div className="text-center">
+                        <div className="text-sm text-gray-500 mb-2">
+                          Input Angle
+                        </div>
+                        <div className="bg-blue-100 px-4 py-3 rounded text-2xl font-mono text-blue-800">
+                          {theta_degrees}°
+                        </div>
+                        <div className="text-xs text-gray-400 mt-1">
+                          {theta_radians.toFixed(3)} rad
+                        </div>
+                      </div>
+
+                      {/* Arrow */}
+                      <div className="text-2xl text-gray-700">→</div>
+
+                      {/* Unit Circle */}
+                      <div className="text-center">
+                        <div className="text-sm text-gray-500 mb-2">
+                          Unit Circle Projection
+                        </div>
+                        <div className="relative w-40 h-40 mx-auto">
+                          {/* Circle */}
+                          <div className="absolute inset-2 border-2 border-gray-400 rounded-full"></div>
+
+                          {/* Axes */}
+                          <div className="absolute top-1/2 left-2 right-2 h-0.5 bg-gray-300"></div>
+                          <div className="absolute left-1/2 top-2 bottom-2 w-0.5 bg-gray-300"></div>
+
+                          {/* Axis labels */}
+                          <div className="absolute right-0 top-1/2 text-xs text-gray-600 transform -translate-y-1/2">
+                            1
+                          </div>
+                          <div className="absolute left-1/2 top-0 text-xs text-gray-600 transform -translate-x-1/2">
+                            1
+                          </div>
+                          <div className="absolute left-0 top-1/2 text-xs text-gray-600 transform -translate-y-1/2">
+                            -1
+                          </div>
+                          <div className="absolute left-1/2 bottom-0 text-xs text-gray-600 transform -translate-x-1/2">
+                            -1
+                          </div>
+
+                          {/* Reference angles */}
+                          <div className="absolute right-1 top-1/2 text-xs text-blue-600 transform -translate-y-1/2 translate-x-full">
+                            0°
+                          </div>
+                          <div className="absolute left-1/2 top-1 text-xs text-blue-600 transform -translate-x-1/2 -translate-y-full">
+                            90°
+                          </div>
+
+                          {/* Center point */}
+                          <div className="absolute top-1/2 left-1/2 w-1.5 h-1.5 bg-gray-600 rounded-full transform -translate-x-1/2 -translate-y-1/2"></div>
+
+                          {/* Angle arc */}
+                          <div className="absolute top-1/2 left-1/2 w-6 h-6 transform -translate-x-1/2 -translate-y-1/2">
+                            <div
+                              className="w-full h-full border-2 border-blue-400 rounded-full"
+                              style={{
+                                clipPath: `polygon(50% 50%, 100% 50%, ${
+                                  50 + 50 * Math.cos(-shifted_theta)
+                                }% ${50 + 50 * Math.sin(-shifted_theta)}%)`,
+                              }}
+                            ></div>
+                          </div>
+
+                          {/* Angle line from center to point */}
+                          <div
+                            className="absolute top-1/2 left-1/2 origin-left"
+                            style={{
+                              width: "68px",
+                              height: "2px",
+                              backgroundColor: "#ef4444",
+                              transform: `translate(-1px, -1px) rotate(${
+                                (-shifted_theta * 180) / Math.PI
+                              }deg)`,
+                            }}
+                          ></div>
+
+                          {/* Point on circle */}
+                          <div
+                            className="absolute w-3 h-3 bg-red-500 rounded-full border-2 border-white transform -translate-x-1/2 -translate-y-1/2 z-10"
+                            style={{
+                              left: `${50 + 34 * cos_component}%`,
+                              top: `${50 - 34 * sin_component}%`,
+                            }}
+                          ></div>
+
+                          {/* Dotted lines to show coordinates */}
+                          <div
+                            className="absolute border-l border-dashed border-green-500 opacity-60"
+                            style={{
+                              left: `${50 + 34 * cos_component}%`,
+                              top: "50%",
+                              height: `${Math.abs(34 * sin_component)}%`,
+                              transform:
+                                sin_component > 0
+                                  ? "translateY(-100%)"
+                                  : "translateY(0%)",
+                            }}
+                          ></div>
+                          <div
+                            className="absolute border-t border-dashed border-green-500 opacity-60"
+                            style={{
+                              top: `${50 - 34 * sin_component}%`,
+                              left: "50%",
+                              width: `${Math.abs(34 * cos_component)}%`,
+                              transform:
+                                cos_component > 0
+                                  ? "translateX(0%)"
+                                  : "translateX(-100%)",
+                            }}
+                          ></div>
+                        </div>
+                        <div className="text-xs text-gray-400 mt-2">
+                          cos({shifted_theta.toFixed(2)}) ={" "}
+                          {cos_component.toFixed(3)}
+                        </div>
+                        <div className="text-xs text-gray-400">
+                          sin({shifted_theta.toFixed(2)}) ={" "}
+                          {sin_component.toFixed(3)}
+                        </div>
+                      </div>
+
+                      {/* Arrow */}
+                      <div className="text-2xl text-gray-700">→</div>
+
+                      {/* Result with comparison */}
+                      <div className="text-center">
+                        <div className="text-sm text-gray-500 mb-2">
+                          {operationType} Result
+                        </div>
+                        <div className="space-y-2">
+                          {/* Model prediction */}
+                          <div>
+                            <div className="text-xs text-gray-400 mb-1">
+                              Model Prediction
+                            </div>
+                            <div className="bg-purple-100 px-4 py-3 rounded text-xl font-mono text-purple-800">
+                              {result.toFixed(6)}
+                            </div>
+                          </div>
+
+                          {/* Ground truth comparison */}
+                          {isKnownOperation && (
+                            <div>
+                              <div className="text-xs text-gray-400 mb-1">
+                                Calculator Says ({lastPreset})
+                              </div>
+                              <div className="bg-blue-100 px-4 py-3 rounded text-xl font-mono text-blue-800">
+                                {groundTruth.toFixed(6)}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Error display */}
+                          {error !== null && (
+                            <div>
+                              <div className="text-xs text-gray-400 mb-1">
+                                Error
+                              </div>
+                              <div
+                                className={`px-4 py-2 rounded text-lg font-mono ${
+                                  error < 0.000001
+                                    ? "bg-green-100 text-green-800"
+                                    : error < 0.001
+                                    ? "bg-yellow-100 text-yellow-800"
+                                    : "bg-red-100 text-red-800"
+                                }`}
+                              >
+                                {error < 0.000001
+                                  ? error.toExponential(2)
+                                  : error.toFixed(6)}
+                              </div>
+                              <div
+                                className={`text-xs mt-1 ${
+                                  error < 0.000001
+                                    ? "text-green-600"
+                                    : error < 0.001
+                                    ? "text-yellow-600"
+                                    : "text-red-600"
+                                }`}
+                              >
+                                {error < 0.000001
+                                  ? "Machine precision!"
+                                  : error < 0.001
+                                  ? "Close approximation"
+                                  : "Weights need tuning"}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="text-xs text-purple-600 mt-2 font-medium">
+                          from Hill Space
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Step-by-step breakdown */}
+                    <div className="bg-gray-50 rounded-lg p-6">
+                      <h3 className="text-sm font-semibold text-gray-800 mb-4">
+                        Step-by-Step Solution:
+                      </h3>
+
+                      <div className="space-y-4">
+                        {/* Step 1 */}
+                        <div className="flex items-center space-x-3">
+                          <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">
+                            1
+                          </div>
+                          <div className="flex items-center space-x-2 whitespace-nowrap">
+                            <span className="font-mono text-sm inline-flex items-center space-x-1">
+                              <span>Input:</span>
+                              <span className="bg-blue-200 px-2 py-1 rounded">
+                                {theta_degrees}°
+                              </span>
+                              <span>→</span>
+                              <span className="bg-blue-200 px-2 py-1 rounded">
+                                {theta_radians.toFixed(3)} rad
+                              </span>
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Step 2 */}
+                        <div className="flex items-center space-x-3">
+                          <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">
+                            2
+                          </div>
+                          <div className="flex items-center space-x-2 whitespace-nowrap">
+                            <span className="font-mono text-sm inline-flex items-center space-x-1">
+                              <span>Phase shift:</span>
+                              <span className="bg-blue-200 px-2 py-1 rounded">
+                                {theta_radians.toFixed(3)}
+                              </span>
+                              <span>+</span>
+                              <span className="bg-green-200 px-2 py-1 rounded">
+                                {phase_shift.toFixed(3)}
+                              </span>
+                              <span>=</span>
+                              <span className="bg-yellow-200 px-2 py-1 rounded">
+                                {shifted_theta.toFixed(3)}
+                              </span>
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Step 3 */}
+                        <div className="flex items-center space-x-3">
+                          <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">
+                            3
+                          </div>
+                          <div className="flex items-center space-x-2 whitespace-nowrap">
+                            <span className="font-mono text-sm inline-flex items-center space-x-1 flex-wrap">
+                              <span className="inline-flex items-center space-x-1">
+                                <span>cos(</span>
+                                <span className="bg-yellow-200 px-2 py-1 rounded">
+                                  {shifted_theta.toFixed(3)}
+                                </span>
+                                <span>) =</span>
+                                <span className="bg-orange-200 px-2 py-1 rounded">
+                                  {cos_component.toFixed(3)}
+                                </span>
+                              </span>
+                              <span className="inline-flex items-center space-x-1">
+                                <span>, sin(</span>
+                                <span className="bg-yellow-200 px-2 py-1 rounded">
+                                  {shifted_theta.toFixed(3)}
+                                </span>
+                                <span>) =</span>
+                                <span className="bg-orange-200 px-2 py-1 rounded">
+                                  {sin_component.toFixed(3)}
+                                </span>
+                              </span>
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Step 4 */}
+                        <div className="flex items-center space-x-3">
+                          <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">
+                            4
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <div className="font-mono text-sm">
+                              <div className="inline-flex items-center space-x-1 whitespace-nowrap mb-1">
+                                <span>Result:</span>
+                                <span className="bg-orange-200 px-2 py-1 rounded">
+                                  {cos_component.toFixed(3)}
+                                </span>
+                                <span>×</span>
+                                <span className="bg-green-200 px-2 py-1 rounded">
+                                  {((1 + cos_sin_selector) / 2).toFixed(3)}
+                                </span>
+                                <span>+</span>
+                              </div>
+                              <div className="inline-flex items-center space-x-1 whitespace-nowrap">
+                                <span className="bg-orange-200 px-2 py-1 rounded">
+                                  {sin_component.toFixed(3)}
+                                </span>
+                                <span>×</span>
+                                <span className="bg-green-200 px-2 py-1 rounded">
+                                  {((1 - cos_sin_selector) / 2).toFixed(3)}
+                                </span>
+                                <span>=</span>
+                                <span className="bg-purple-200 px-2 py-1 rounded font-bold">
+                                  {result.toFixed(3)}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Weight configuration */}
+                  <div className="text-center">
+                    <div className="text-sm text-gray-500 mb-2">
+                      Weight Configuration
+                    </div>
+                    <div className="flex items-center justify-center space-x-4">
+                      <div className="bg-green-100 px-3 py-2 rounded whitespace-nowrap">
+                        <span className="text-sm text-gray-600">
+                          Selector:{" "}
+                        </span>
+                        <span className="font-mono text-green-800">
+                          {weight1}
+                        </span>
+                      </div>
+                      <div className="bg-green-100 px-3 py-2 rounded whitespace-nowrap">
+                        <span className="text-sm text-gray-600">Phase: </span>
+                        <span className="font-mono text-green-800">
+                          {weight2}π
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      };
+      // Render the widget
+      var root = ReactDOM.createRoot(
+        document.getElementById("unit-circle-primitive-widget")
+      );
+      root.render(<UnitCirclePrimitiveWidget />);
+    </script>
+
+    <script type="text/babel">
+      const TrigonometricProductsPrimitiveWidget = () => {
+        const [input1, setInput1] = React.useState(30);
+        const [input2, setInput2] = React.useState(15);
+        const [w0, setW0] = React.useState(1.0); // cos vs sin selection
+        const [w1, setW1] = React.useState(1.0); // sum vs diff selection
+        const [lastPreset, setLastPreset] = React.useState("cos_sub");
+
+        // Convert to radians
+        const theta1 = (input1 * Math.PI) / 180;
+        const theta2 = (input2 * Math.PI) / 180;
+
+        // Compute trigonometric components
+        const cos1 = Math.cos(theta1);
+        const sin1 = Math.sin(theta1);
+        const cos2 = Math.cos(theta2);
+        const sin2 = Math.sin(theta2);
+
+        // Four fundamental trigonometric products
+        const cos_diff = cos1 * cos2 + sin1 * sin2; // cos(θ₁ - θ₂)
+        const cos_sum = cos1 * cos2 - sin1 * sin2; // cos(θ₁ + θ₂)
+        const sin_diff = sin1 * cos2 - cos1 * sin2; // sin(θ₁ - θ₂)
+        const sin_sum = sin1 * cos2 + cos1 * sin2; // sin(θ₁ + θ₂)
+
+        // Apply weight matrix selection
+        const result =
+          w0 * (w1 * cos_diff + (1 - w1) * cos_sum) +
+          (1 - w0) * (w1 * sin_diff + (1 - w1) * sin_sum);
+
+        // Calculate ground truth based on last preset clicked
+        let groundTruth = null;
+        let operationType = "";
+        let operationFormula = "";
+        let isKnownOperation = false;
+
+        // Determine operation type based on current weights
+        if (Math.abs(w0 - 1.0) < 0.1 && Math.abs(w1 - 0.0) < 0.1) {
+          operationType = "Cosine Sum";
+          operationFormula = `cos(${input1}° + ${input2}°)`;
+        } else if (Math.abs(w0 - 0.0) < 0.1 && Math.abs(w1 - 0.0) < 0.1) {
+          operationType = "Sine Sum";
+          operationFormula = `sin(${input1}° + ${input2}°)`;
+        } else if (Math.abs(w0 - 1.0) < 0.1 && Math.abs(w1 - 1.0) < 0.1) {
+          operationType = "Cosine Difference";
+          operationFormula = `cos(${input1}° - ${input2}°)`;
+        } else if (Math.abs(w0 - 0.0) < 0.1 && Math.abs(w1 - 1.0) < 0.1) {
+          operationType = "Sine Difference";
+          operationFormula = `sin(${input1}° - ${input2}°)`;
+        } else {
+          operationType = "Weighted Combination";
+          operationFormula = `mixed trigonometric products`;
+        }
+
+        // Calculate ground truth based on last preset
+        if (lastPreset === "cos_add") {
+          groundTruth = Math.cos(theta1 + theta2);
+          isKnownOperation = true;
+        } else if (lastPreset === "sin_add") {
+          groundTruth = Math.sin(theta1 + theta2);
+          isKnownOperation = true;
+        } else if (lastPreset === "cos_sub") {
+          groundTruth = Math.cos(theta1 - theta2);
+          isKnownOperation = true;
+        } else if (lastPreset === "sin_sub") {
+          groundTruth = Math.sin(theta1 - theta2);
+          isKnownOperation = true;
+        }
+
+        const error = isKnownOperation ? Math.abs(result - groundTruth) : null;
+
+        return (
+          <div className="w-full bg-white p-6 rounded-lg">
+            {/* Controls */}
+            <div className="p-4 mb-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                Customize Values
+              </h3>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Input 1 (degrees)
+                  </label>
+                  <input
+                    type="number"
+                    value={input1}
+                    onChange={(e) => setInput1(parseFloat(e.target.value) || 0)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Input 2 (degrees)
+                  </label>
+                  <input
+                    type="number"
+                    value={input2}
+                    onChange={(e) => setInput2(parseFloat(e.target.value) || 0)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    W[0] (cos/sin selector)
+                  </label>
+                  <input
+                    type="number"
+                    step="0.05"
+                    min="-1"
+                    max="1"
+                    value={w0}
+                    onChange={(e) => setW0(parseFloat(e.target.value) || 0)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                  />
+                  <div className="text-xs text-gray-500 mt-1">
+                    1.0=cos, 0.0=sin
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    W[1] (sum/diff selector)
+                  </label>
+                  <input
+                    type="number"
+                    step="0.05"
+                    min="-1"
+                    max="1"
+                    value={w1}
+                    onChange={(e) => setW1(parseFloat(e.target.value) || 0)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                  />
+                  <div className="text-xs text-gray-500 mt-1">
+                    1.0=diff, 0.0=sum
+                  </div>
+                </div>
+              </div>
+
+              {/* Preset buttons */}
+              <div className="mb-4">
+                <div className="text-sm font-medium text-gray-700 mb-2">
+                  Quick Presets (Compound Operations Only):
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={() => {
+                      setW0(1.0);
+                      setW1(0.0);
+                      setLastPreset("cos_add");
+                    }}
+                    className="bg-green-100 hover:bg-green-200 text-green-800 text-sm py-1 px-3 rounded transition-colors"
+                  >
+                    cos(θ₁ + θ₂)
+                  </button>
+                  <button
+                    onClick={() => {
+                      setW0(0.0);
+                      setW1(0.0);
+                      setLastPreset("sin_add");
+                    }}
+                    className="bg-emerald-100 hover:bg-emerald-200 text-emerald-800 text-sm py-1 px-3 rounded transition-colors"
+                  >
+                    sin(θ₁ + θ₂)
+                  </button>
+                  <button
+                    onClick={() => {
+                      setW0(1.0);
+                      setW1(1.0);
+                      setLastPreset("cos_sub");
+                    }}
+                    className="bg-purple-100 hover:bg-purple-200 text-purple-800 text-sm py-1 px-3 rounded transition-colors"
+                  >
+                    cos(θ₁ - θ₂)
+                  </button>
+                  <button
+                    onClick={() => {
+                      setW0(0.0);
+                      setW1(1.0);
+                      setLastPreset("sin_sub");
+                    }}
+                    className="bg-violet-100 hover:bg-violet-200 text-violet-800 text-sm py-1 px-3 rounded transition-colors"
+                  >
+                    sin(θ₁ - θ₂)
+                  </button>
+                </div>
+                <div className="text-xs text-gray-500 mt-2">
+                  Note: Basic cos/sin operations belong in rotation space (unary
+                  unit circle approach)
+                </div>
+              </div>
+            </div>
+
+            {/* Visualization */}
+            <div className="bg-white rounded-lg p-6">
+              <div className="space-y-8">
+                {/* Main operation display */}
+                <div className="flex items-center justify-center space-x-6 flex-wrap">
+                  {/* Input 1 */}
+                  <div className="text-center">
+                    <div className="text-sm text-gray-500 mb-2">Input 1</div>
+                    <div className="bg-blue-100 px-3 py-2 rounded text-xl font-mono text-blue-800">
+                      {input1}°
+                    </div>
+                    <div className="text-xs text-gray-400 mt-1">
+                      {theta1.toFixed(3)} rad
+                    </div>
+                  </div>
+
+                  <div className="text-lg text-gray-700">+</div>
+
+                  {/* Input 2 */}
+                  <div className="text-center">
+                    <div className="text-sm text-gray-500 mb-2">Input 2</div>
+                    <div className="bg-blue-100 px-3 py-2 rounded text-xl font-mono text-blue-800">
+                      {input2}°
+                    </div>
+                    <div className="text-xs text-gray-400 mt-1">
+                      {theta2.toFixed(3)} rad
+                    </div>
+                  </div>
+
+                  <div className="text-2xl text-gray-700">→</div>
+
+                  {/* Four Products Matrix */}
+                  <div className="text-center">
+                    <div className="text-sm text-gray-500 mb-2">
+                      Trigonometric Products
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="bg-red-100 px-2 py-1 rounded text-sm font-mono text-red-800">
+                        cos_diff
+                        <br />
+                        {cos_diff.toFixed(3)}
+                      </div>
+                      <div className="bg-orange-100 px-2 py-1 rounded text-sm font-mono text-orange-800">
+                        cos_sum
+                        <br />
+                        {cos_sum.toFixed(3)}
+                      </div>
+                      <div className="bg-yellow-100 px-2 py-1 rounded text-sm font-mono text-yellow-800">
+                        sin_diff
+                        <br />
+                        {sin_diff.toFixed(3)}
+                      </div>
+                      <div className="bg-amber-100 px-2 py-1 rounded text-sm font-mono text-amber-800">
+                        sin_sum
+                        <br />
+                        {sin_sum.toFixed(3)}
+                      </div>
+                    </div>
+                    <div className="text-xs text-gray-400 mt-1">
+                      2×2 Product Matrix
+                    </div>
+                  </div>
+
+                  <div className="text-lg text-gray-700">×</div>
+
+                  {/* Weight Matrix */}
+                  <div className="text-center">
+                    <div className="text-sm text-gray-500 mb-2">
+                      Weight Matrix
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="bg-green-100 px-2 py-1 rounded text-sm font-mono text-green-800">
+                        W[0]×W[1]
+                        <br />
+                        {(w0 * w1).toFixed(3)}
+                      </div>
+                      <div className="bg-green-100 px-2 py-1 rounded text-sm font-mono text-green-800">
+                        W[0]×(1-W[1])
+                        <br />
+                        {(w0 * (1 - w1)).toFixed(3)}
+                      </div>
+                      <div className="bg-green-100 px-2 py-1 rounded text-sm font-mono text-green-800">
+                        (1-W[0])×W[1]
+                        <br />
+                        {((1 - w0) * w1).toFixed(3)}
+                      </div>
+                      <div className="bg-green-100 px-2 py-1 rounded text-sm font-mono text-green-800">
+                        (1-W[0])×(1-W[1])
+                        <br />
+                        {((1 - w0) * (1 - w1)).toFixed(3)}
+                      </div>
+                    </div>
+                    <div className="text-xs text-green-600 mt-1 font-medium">
+                      from Hill Space
+                    </div>
+                  </div>
+
+                  <div className="text-lg text-gray-700">=</div>
+
+                  {/* Result */}
+                  <div className="text-center">
+                    <div className="text-sm text-gray-500 mb-2">
+                      {operationType}
+                    </div>
+                    <div className="space-y-2">
+                      {/* Model prediction */}
+                      <div>
+                        <div className="text-xs text-gray-400 mb-1">
+                          Model Prediction
+                        </div>
+                        <div className="bg-purple-100 px-4 py-3 rounded text-xl font-mono text-purple-800">
+                          {result.toFixed(6)}
+                        </div>
+                      </div>
+
+                      {/* Ground truth comparison */}
+                      {isKnownOperation && (
+                        <div>
+                          <div className="text-xs text-gray-400 mb-1">
+                            Calculator Says
+                          </div>
+                          <div className="bg-blue-100 px-4 py-3 rounded text-xl font-mono text-blue-800">
+                            {groundTruth.toFixed(6)}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Error display */}
+                      {error !== null && (
+                        <div>
+                          <div className="text-xs text-gray-400 mb-1">
+                            Error
+                          </div>
+                          <div
+                            className={`px-4 py-2 rounded text-lg font-mono ${
+                              error < 0.000001
+                                ? "bg-green-100 text-green-800"
+                                : error < 0.001
+                                ? "bg-yellow-100 text-yellow-800"
+                                : "bg-red-100 text-red-800"
+                            }`}
+                          >
+                            {error < 0.000001
+                              ? error.toExponential(2)
+                              : error.toFixed(6)}
+                          </div>
+                          <div
+                            className={`text-xs mt-1 ${
+                              error < 0.000001
+                                ? "text-green-600"
+                                : error < 0.001
+                                ? "text-yellow-600"
+                                : "text-red-600"
+                            }`}
+                          >
+                            {error < 0.000001
+                              ? "Machine precision!"
+                              : error < 0.001
+                              ? "Close approximation"
+                              : "Weights need adjustment"}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="text-xs text-purple-600 mt-2 font-medium">
+                      {operationFormula}
+                    </div>
+                    <div className="text-xs text-gray-400 mt-1">
+                      from Hill Space
+                    </div>
+                  </div>
+                </div>
+
+                {/* Step-by-step breakdown */}
+                <div className="bg-gray-50 rounded-lg p-6">
+                  <h3 className="text-md font-semibold text-gray-800 mb-4">
+                    Step-by-Step Solution:
+                  </h3>
+
+                  <div className="space-y-4">
+                    {/* Step 1 */}
+                    <div className="flex items-center space-x-3">
+                      <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">
+                        1
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="font-mono text-sm">
+                          <div className="inline-flex items-center space-x-1 whitespace-nowrap mb-1">
+                            <span>Compute trig components: cos(</span>
+                            <span className="bg-blue-200 px-2 py-1 rounded">
+                              {input1}°
+                            </span>
+                            <span>) =</span>
+                            <span className="bg-blue-200 px-2 py-1 rounded">
+                              {cos1.toFixed(3)}
+                            </span>
+                          </div>
+                          <div className="inline-flex items-center space-x-1 whitespace-nowrap">
+                            <span>, sin(</span>
+                            <span className="bg-blue-200 px-2 py-1 rounded">
+                              {input1}°
+                            </span>
+                            <span>) =</span>
+                            <span className="bg-blue-200 px-2 py-1 rounded">
+                              {sin1.toFixed(3)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Step 2 */}
+                    <div className="flex items-center space-x-3">
+                      <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">
+                        2
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="font-mono text-sm">
+                          <div className="inline-flex items-center space-x-1 whitespace-nowrap mb-1">
+                            <span>Compute trig components: cos(</span>
+                            <span className="bg-blue-200 px-2 py-1 rounded">
+                              {input2}°
+                            </span>
+                            <span>) =</span>
+                            <span className="bg-blue-200 px-2 py-1 rounded">
+                              {cos2.toFixed(3)}
+                            </span>
+                          </div>
+                          <div className="inline-flex items-center space-x-1 whitespace-nowrap">
+                            <span>, sin(</span>
+                            <span className="bg-blue-200 px-2 py-1 rounded">
+                              {input2}°
+                            </span>
+                            <span>) =</span>
+                            <span className="bg-blue-200 px-2 py-1 rounded">
+                              {sin2.toFixed(3)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Step 3 */}
+                    <div className="flex items-center space-x-3">
+                      <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">
+                        3
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="font-mono text-sm">
+                          <div className="inline-flex items-center space-x-1 whitespace-nowrap mb-1">
+                            <span>Compute four products:</span>
+                            <span className="bg-red-200 px-2 py-1 rounded">
+                              cos_diff = {cos_diff.toFixed(3)}
+                            </span>
+                            <span>,</span>
+                            <span className="bg-orange-200 px-2 py-1 rounded">
+                              cos_sum = {cos_sum.toFixed(3)}
+                            </span>
+                          </div>
+                          <div className="inline-flex items-center space-x-1 whitespace-nowrap">
+                            <span className="bg-yellow-200 px-2 py-1 rounded">
+                              sin_diff = {sin_diff.toFixed(3)}
+                            </span>
+                            <span>,</span>
+                            <span className="bg-amber-200 px-2 py-1 rounded">
+                              sin_sum = {sin_sum.toFixed(3)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Step 4 */}
+                    <div className="flex items-center space-x-3">
+                      <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">
+                        4
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="font-mono text-sm">
+                          <div className="inline-flex items-center space-x-1 whitespace-nowrap mb-1">
+                            <span>Apply weight matrix:</span>
+                            <span className="bg-green-200 px-2 py-1 rounded">
+                              {(w0 * w1).toFixed(3)}
+                            </span>
+                            <span>×</span>
+                            <span className="bg-red-200 px-2 py-1 rounded">
+                              {cos_diff.toFixed(3)}
+                            </span>
+                            <span>+</span>
+                            <span className="bg-green-200 px-2 py-1 rounded">
+                              {(w0 * (1 - w1)).toFixed(3)}
+                            </span>
+                            <span>×</span>
+                            <span className="bg-orange-200 px-2 py-1 rounded">
+                              {cos_sum.toFixed(3)}
+                            </span>
+                            <span>+</span>
+                          </div>
+                          <div className="inline-flex items-center space-x-1 whitespace-nowrap">
+                            <span className="bg-green-200 px-2 py-1 rounded">
+                              {((1 - w0) * w1).toFixed(3)}
+                            </span>
+                            <span>×</span>
+                            <span className="bg-yellow-200 px-2 py-1 rounded">
+                              {sin_diff.toFixed(3)}
+                            </span>
+                            <span>+</span>
+                            <span className="bg-green-200 px-2 py-1 rounded">
+                              {((1 - w0) * (1 - w1)).toFixed(3)}
+                            </span>
+                            <span>×</span>
+                            <span className="bg-amber-200 px-2 py-1 rounded">
+                              {sin_sum.toFixed(3)}
+                            </span>
+                            <span>=</span>
+                            <span className="bg-purple-200 px-2 py-1 rounded font-bold">
+                              {result.toFixed(6)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      };
+      // Render the widget
+      var root = ReactDOM.createRoot(
+        document.getElementById("trigonometric-products-primitive-widget")
+      );
+      root.render(<TrigonometricProductsPrimitiveWidget />);
+    </script>
   </body>
 </html>
