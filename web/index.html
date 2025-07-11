@@ -220,10 +220,10 @@
           </h2>
           <p class="text-lg mb-16 text-gray-600">
             It's difficult to imagine that neural arithmetic has such a simple
-            solution. Play with these widgets to understand how the Hill Space
-            constraint topology enables systematic discrete selection. Each
-            primitive demonstrates machine-precision mathematics through simple
-            weight configurations.
+            solution. Play with these widgets to see how setting just a few
+            weights to specific values creates reliable mathematical operations.
+            Each primitive demonstrates machine-precision mathematics through
+            discrete selection.
           </p>
 
           <!-- Additive Primitive -->
@@ -274,6 +274,100 @@
               class="overflow-hidden"
             >
               <!-- Widget will be rendered here -->
+            </div>
+          </div>
+        </section>
+
+        <!-- Understanding the Challenge -->
+        <section class="mb-16">
+          <h2 class="text-3xl font-bold mb-6">
+            The Problem: Optimization vs. Discrete Selection
+          </h2>
+          <p class="text-lg mb-8 text-gray-700">
+            Now that you've seen discrete weight configurations producing
+            perfect mathematics, let's understand why this is remarkable.
+            There's a fundamental tension between what neural network optimizers
+            do naturally and what discrete selection requires.
+          </p>
+          <div class="grid md:grid-cols-2 gap-8 mb-8">
+            <div class="bg-red-50 border-l-4 border-red-400 p-6">
+              <h3 class="font-bold text-red-800 mb-3">
+                🎯 Discrete Selection Needs
+              </h3>
+              <p class="text-red-700 mb-3">
+                Mathematical operations require specific weight values:
+              </p>
+              <div class="font-mono text-lg bg-red-100 p-3 rounded">
+                [1, 1] → Addition<br />
+                [1, -1] → Subtraction<br />
+                [-1, 0] → Negation
+              </div>
+              <p class="text-red-700 mt-3 text-sm">
+                Stable operations emerge from specific weight configurations.
+              </p>
+            </div>
+
+            <div class="bg-orange-50 border-l-4 border-orange-400 p-6">
+              <h3 class="font-bold text-orange-800 mb-3">
+                ⚡ Optimizer Reality
+              </h3>
+              <p class="text-orange-700 mb-3">
+                Gradient descent learns unbounded weights:
+              </p>
+              <div class="font-mono text-lg bg-orange-100 p-3 rounded">
+                [10.847, 10.923]<br />
+                [0.734, -7.812]<br />
+                [-25.891, 24.956]
+              </div>
+              <p class="text-orange-700 mt-3 text-sm">
+                Optimizers need freedom to follow gradients anywhere.
+              </p>
+            </div>
+          </div>
+
+          <h3 class="text-2xl font-bold mb-6">
+            Hill Space: Elegant Mapping Between Worlds
+          </h3>
+
+          <div class="flex justify-center mb-6">
+            <img
+              src="hill_space_cross_sections.svg"
+              alt="Hill Space Constraint Topology"
+              class="max-w-full h-auto rounded-lg shadow-lg"
+            />
+          </div>
+
+          <p class="text-lg text-gray-700 mb-4">
+            Hill Space—the constraint topology created by
+            <span class="font-mono bg-gray-100 px-2 py-1 rounded"
+              >W = tanh(Ŵ) ⊙ σ(M̂)</span
+            >—maps any unbounded learned weights to the [-1,1] range, where
+            stable plateaus naturally guide optimization toward discrete
+            selections.
+          </p>
+
+          <div class="grid md:grid-cols-3 gap-6 mt-6">
+            <div class="text-center">
+              <div class="text-3xl mb-2">∞</div>
+              <h4 class="font-semibold text-gray-800">Unbounded Input</h4>
+              <p class="text-sm text-gray-600">
+                Optimizers learn any values they need: -47.2, 156.8, 0.001
+              </p>
+            </div>
+            <div class="text-center">
+              <div class="text-3xl mb-2">→</div>
+              <h4 class="font-semibold text-gray-800">Constraint Function</h4>
+              <p class="text-sm text-gray-600">
+                tanh bounds to [-1,1], sigmoid provides gating
+              </p>
+            </div>
+            <div class="text-center">
+              <div class="text-3xl mb-2">[-1,1]</div>
+              <h4 class="font-semibold text-gray-800">Bounded Output</h4>
+              <p class="text-sm text-gray-600">
+                Maps to [-1,1] range, naturally converging toward discrete
+                selections
+              </p>
             </div>
           </div>
         </section>
