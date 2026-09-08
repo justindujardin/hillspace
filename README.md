@@ -17,6 +17,8 @@ npm run dev          # rebuild on save, served at http://localhost:8787
 
 The PDF is rendered by WeasyPrint, which the build starts through `uv run --with weasyprint`, so `uv` has to be on your path for the full build.
 
+Pushes to `main` deploy to Netlify through the workflow in `.github/workflows/deploy.yml`, which builds both artifacts on a runner that has WeasyPrint's libraries. A pull request gets its own preview, linked from a comment on the PR.
+
 The figures live in `src/`. `spec.ts` names the kinds a figure fence may declare, `figures.ts` renders each kind to SVG, `hydrate.ts` adds the sliders in the browser, and `hillspace.ts` is the constraint and the primitives as plain functions, shared by both. The two optimizer tables are not typed in; `tools/build.ts` reads them from
 `results/optimizer_snapping/optimizer_snapping_raw.json` at build time, so rerunning that experiment and rebuilding updates them.
 

@@ -1,0 +1,74 @@
+# Builds the page and the PDF and deploys dist/ to Netlify: production from
+# main, and for a pull request a preview at
+# deploy-preview-<N>--<site>.netlify.app, linked from a comment on the PR.
+# Netlify's own builder cannot render the PDF (WeasyPrint needs Pango and
+# Cairo, which its image lacks), so builds are stopped on the Netlify side
+# and this workflow is the deploy path.
+#
+# Secrets: NETLIFY_AUTH_TOKEN, a personal access token from
+# app.netlify.com/user/applications, and NETLIFY_SITE_ID from the site's
+# configuration page.
+
+name: deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: WeasyPrint's libraries and the print fonts
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libpango-1.0-0 libpangoft2-1.0-0 libharfbuzz-subset0 libgdk-pixbuf-2.0-0 fonts-dejavu-core
+
+      - name: uv
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - run: npm ci
+      - run: npm run build
+
+      # a pull request from a fork cannot read the secrets: it is built, not deployed
+      - name: Deploy to Netlify
+        if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = "push" ]; then
+            npx --yes netlify-cli deploy --dir=dist --prod --message="$GITHUB_SHA" --json > deploy.json
+          else
+            npx --yes netlify-cli deploy --dir=dist --alias="deploy-preview-${{ github.event.number }}" \
+              --message="PR #${{ github.event.number }} $GITHUB_SHA" --json > deploy.json
+          fi
+          jq -r '"deployed " + .deploy_url' deploy.json
+
+      - name: Preview link on the pull request
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.number }}
+        run: |
+          url=$(jq -r .deploy_url deploy.json)
+          body="Deploy preview for ${GITHUB_SHA::7}: $url (PDF: $url/hill-space.pdf)"
+          gh pr comment "$PR" --edit-last --body "$body" || gh pr comment "$PR" --body "$body"
