@@ -21,7 +21,6 @@ class MathyOperatorDataset(Dataset):
         n_samples: int = 64000,
         train_range: Tuple[float, float] = (1e-8, 10.0),
         test_range: Tuple[float, float] = (-100.0, 100.0),
-        normal_params: Tuple[float, float] = (0, 1),
         exp_lambda: float = 0.2,
         precision_limit: Optional[float] = None,
         seed: Optional[int] = None,
@@ -39,7 +38,6 @@ class MathyOperatorDataset(Dataset):
         self.n_samples = n_samples
         self.train_range = train_range
         self.test_range = test_range
-        self.normal_params = normal_params
         self.exp_lambda = exp_lambda
         self.device = device
         self.is_test = is_test
@@ -69,18 +67,28 @@ class MathyOperatorDataset(Dataset):
             x2 = np.random.uniform(a, b, size=n_samples)
 
         elif distribution == "truncated_normal":
+            # iNALU's convention (nalu_syn_simple_arith.py, sample()): the
+            # range is the truncation interval [a, b]; the normal underneath
+            # has mean (a+b)/2 and std (b-a)/6, so the interval is ±3σ.
             a, b = self.active_range
-            mu, sigma = self.normal_params
+            mu, sigma = (a + b) / 2, (b - a) / 6
             truncated_norm = stats.truncnorm(
                 (a - mu) / sigma, (b - mu) / sigma, loc=mu, scale=sigma
             )
             x1 = truncated_norm.rvs(size=n_samples)
             x2 = truncated_norm.rvs(size=n_samples)
         elif distribution == "exponential":
-            # For exponential, interpret "range" as (lambda1, lambda2) parameters
-            lambda1, lambda2 = self.active_range
-            x1 = np.random.exponential(1 / lambda1, size=n_samples)
-            x2 = np.random.exponential(1 / lambda2, size=n_samples)
+            # iNALU's convention: one numpy scale parameter shared by both
+            # inputs (np.random.exponential(scale)); the extrapolation set
+            # uses a different scale, not a different range. The range tuple
+            # is degenerate, (scale, scale), so the type stays one shape.
+            scale, scale_check = self.active_range
+            if scale != scale_check:
+                raise ValueError(
+                    f"exponential range must be (scale, scale), got {self.active_range}"
+                )
+            x1 = np.random.exponential(scale, size=n_samples)
+            x2 = np.random.exponential(scale, size=n_samples)
         else:
             raise ValueError(f"Unsupported distribution: {distribution}")
 

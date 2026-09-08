@@ -1,0 +1,19 @@
+{
+  "operation": "subtract",
+  "dtype": "torch.float64",
+  "num_samples": 100000000,
+  "nonfinite_native_frac": 0.0,
+  "elapsed_s": 7.3,
+  "seed_root": 20260724,
+  "config_index": 5,
+  "methods": {
+    "analytical": {
+      "bitwise_frac": 1.0,
+      "nonfinite_frac": 0.0,
+      "both_finite": 100000000,
+      "ulp_le1_frac": 1.0,
+      "ulp_q99_99": 0.0,
+      "ulp_max": 0.0
+    }
+  }
+}

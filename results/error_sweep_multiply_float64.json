@@ -1,0 +1,35 @@
+{
+  "operation": "multiply",
+  "dtype": "torch.float64",
+  "num_samples": 100000000,
+  "nonfinite_native_frac": 0.12484853,
+  "elapsed_s": 16.3,
+  "seed_root": 20260724,
+  "config_index": 6,
+  "methods": {
+    "analytical": {
+      "bitwise_frac": 1.0,
+      "nonfinite_frac": 0.12484853,
+      "both_finite": 87515147,
+      "ulp_le1_frac": 1.0,
+      "ulp_q99_99": 0.0,
+      "ulp_max": 0.0
+    },
+    "complex128": {
+      "bitwise_frac": 0.22518941,
+      "nonfinite_frac": 0.12484853,
+      "both_finite": 87515147,
+      "ulp_le1_frac": 0.7736789838220806,
+      "ulp_q99_99": 1024.0,
+      "ulp_max": 1024.0
+    },
+    "logspace": {
+      "bitwise_frac": 5.807e-05,
+      "nonfinite_frac": 0.0,
+      "both_finite": 87515147,
+      "ulp_le1_frac": 0.0007717292641924032,
+      "ulp_q99_99": 4.483659984000778e+18,
+      "ulp_max": 4.498211195760673e+18
+    }
+  }
+}

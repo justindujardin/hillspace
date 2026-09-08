@@ -11,32 +11,38 @@ from safetensors.torch import load_file, save_file
 MathySpace = Literal["hill", "soft", "log", "quad", "cube", "hill_snap"]
 
 
-def snapping_tanh(x, precision_threshold=1e-6):
+# Default snap threshold 1e-2. Derived from what optimizers actually reach: a
+# converged weight lands within ~2e-3 of a target (even slow optimizers like
+# Adagrad), while the stable selections {-1, 0, 1} are ~0.5-1.0 apart, so a 1e-2
+# window catches any converged weight and can never reach a neighboring target.
+# A primitive whose valid targets sit closer than this is malformed, not a problem
+# for the space.
+SNAP_THRESHOLD = 1e-2
+
+
+def snapping_tanh(x, precision_threshold=SNAP_THRESHOLD):
     raw_tanh = torch.tanh(x)
 
-    # If we're within precision_threshold of saturation, snap to exact values
-    # tanh(15.0) ≈ 0.999999642, so we need threshold > 3.6e-7
+    # Snap values within precision_threshold of a saturation value to that value.
     upper_snap_mask = raw_tanh > (1.0 - precision_threshold)
     lower_snap_mask = raw_tanh < (-1.0 + precision_threshold)
 
     result = raw_tanh.clone()
-    result[upper_snap_mask] = 1.0  # Exact unity!
-    result[lower_snap_mask] = -1.0  # Exact negative unity!
+    result[upper_snap_mask] = 1.0
+    result[lower_snap_mask] = -1.0
 
     return result
 
 
-def snapping_sigmoid(x, precision_threshold=1e-6):
+def snapping_sigmoid(x, precision_threshold=SNAP_THRESHOLD):
     raw_sigmoid = torch.sigmoid(x)
 
-    # Snap to exact values near saturation
-    # sigmoid(15.0) ≈ 0.999999694, so we need threshold > 3.1e-7
     upper_snap_mask = raw_sigmoid > (1.0 - precision_threshold)
     lower_snap_mask = raw_sigmoid < precision_threshold
 
     result = raw_sigmoid.clone()
-    result[upper_snap_mask] = 1.0  # Exact unity!
-    result[lower_snap_mask] = 0.0  # Exact zero!
+    result[upper_snap_mask] = 1.0
+    result[lower_snap_mask] = 0.0
 
     return result
 
@@ -56,19 +62,24 @@ class MathyUnit(torch.nn.Module):
         self.dtype = dtype
         self.space = space
         self.init_scale = init_scale
+        # Threshold used by the "hill_snap" space. Instance-level so threshold
+        # sweeps (experiment_optimizer_snapping) can vary it without touching
+        # the module default.
+        self.snap_threshold = SNAP_THRESHOLD
 
         # 2 parameter transformations for Additive/Exponential/Trigonometric operations
         #
         #
         # Combining operations (addition vs multiplication)
-        self.W_combine_hat = self._new_parameter()
-        self.M_combine_hat = self._new_parameter()
-        # Combining operations (addition vs multiplication)
+        self.W_multiply_hat = self._new_parameter()
+        self.M_multiply_hat = self._new_parameter()
         self.W_add_hat = self._new_parameter()
         self.M_add_hat = self._new_parameter()
         # Separating operations (difference vs ratio)
-        self.W_separate_hat = self._new_parameter()
-        self.M_separate_hat = self._new_parameter()
+        self.W_subtract_hat = self._new_parameter()
+        self.M_subtract_hat = self._new_parameter()
+        self.W_divide_hat = self._new_parameter()
+        self.M_divide_hat = self._new_parameter()
         # Positive directional (additive/exponential identities, cos)
         self.W_positive_hat = self._new_parameter()
         self.M_positive_hat = self._new_parameter()
@@ -133,7 +144,9 @@ class MathyUnit(torch.nn.Module):
             return torch.tanh(W_hat) * torch.sigmoid(M_hat)
 
         elif self.space == "hill_snap":
-            W = snapping_tanh(W_hat) * snapping_sigmoid(M_hat)
+            W = snapping_tanh(W_hat, self.snap_threshold) * snapping_sigmoid(
+                M_hat, self.snap_threshold
+            )
             return W
         elif self.space == "soft":
             a = torch.exp(W_hat / tau)
@@ -245,14 +258,14 @@ class MathyUnit(torch.nn.Module):
             W_hat = self.W_add_hat
             M_hat = self.M_add_hat
         elif operation == "subtract":
-            W_hat = self.W_separate_hat
-            M_hat = self.M_separate_hat
+            W_hat = self.W_subtract_hat
+            M_hat = self.M_subtract_hat
         elif operation == "multiply":
-            W_hat = self.W_combine_hat
-            M_hat = self.M_combine_hat
+            W_hat = self.W_multiply_hat
+            M_hat = self.M_multiply_hat
         elif operation == "divide":
-            W_hat = self.W_separate_hat
-            M_hat = self.M_separate_hat
+            W_hat = self.W_divide_hat
+            M_hat = self.M_divide_hat
         elif operation == "negation":
             W_hat = self.W_negative_hat
             M_hat = self.M_negative_hat
@@ -296,14 +309,14 @@ class MathyUnit(torch.nn.Module):
         - lnegative: [-1, 0]: sin(θ)
         """
         additive_ops = {
-            "add": [self.W_combine_hat, self.M_combine_hat],
-            "subtract": [self.W_separate_hat, self.M_separate_hat],
+            "add": [self.W_add_hat, self.M_add_hat],
+            "subtract": [self.W_subtract_hat, self.M_subtract_hat],
             "negation": [self.W_negative_hat, self.M_negative_hat],
             # "identity": [self.W_positive_hat, self.M_positive_hat],
         }
         exponential_ops = {
-            "multiply": [self.W_combine_hat, self.M_combine_hat],
-            "divide": [self.W_separate_hat, self.M_separate_hat],
+            "multiply": [self.W_multiply_hat, self.M_multiply_hat],
+            "divide": [self.W_divide_hat, self.M_divide_hat],
             "identity": [self.W_positive_hat, self.M_positive_hat],
             "reciprocal": [self.W_negative_hat, self.M_negative_hat],
             # "binary_reciprocal": [self.W_lnegative_hat, self.M_lnegative_hat],

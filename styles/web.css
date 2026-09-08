@@ -1,0 +1,116 @@
+/* Hill Space — web theme over the penname base. The base carries the
+   DJC paper palette and scale; this file is the hill vocabulary:
+   copper = tanh (sign), slate = sigmoid (magnitude gate), plum = the
+   composed weight W. The PDF theme defines the SAME token names with
+   print values; renderers only ever speak tokens. */
+
+:root {
+  --tanh: var(--accent);
+  --sigmoid: var(--link);
+  --weight: var(--accent-2);
+}
+
+/* section headers: top-level sections announce themselves — larger type,
+   a hairline rule, and asymmetric spacing (big above, small below) so they
+   read as chapter breaks instead of blending into the subsections. */
+article h1 { font-size: 30px; margin: 72px 0 14px; padding-top: 28px; border-top: 1px solid var(--border); }
+article h1:first-child { margin-top: 40px; }
+
+/* svg vocabulary */
+.line-tanh { stroke: var(--tanh); stroke-width: 2; }
+.line-sigmoid { stroke: var(--sigmoid); stroke-width: 2; }
+.line-weight { stroke: var(--weight); stroke-width: 2; }
+.line-good { stroke: var(--good); stroke-width: 2; }
+.line-bad { stroke: var(--bad); stroke-width: 2; }
+.line-ghost { stroke: var(--text-ghost); stroke-width: 1.4; stroke-dasharray: 5 5; }
+.line-axis { stroke: var(--text-ghost); stroke-width: 1; }
+.dot-tanh { fill: var(--tanh); }
+.dot-sigmoid { fill: var(--sigmoid); }
+.dot-weight { fill: var(--weight); }
+.dot-bad { fill: var(--bad); }
+.ring-target { fill: none; stroke: var(--text-ghost); stroke-width: 1.4; }
+.bar-tanh { fill: var(--tanh); }
+.bar-sigmoid { fill: var(--sigmoid); }
+.bar-weight { fill: var(--weight); }
+.bar-ghost { fill: var(--text-ghost); }
+.bar-bad { fill: var(--bad); }
+
+/* legend swatches for this vocabulary */
+.leg-swatch.bar-tanh { background: var(--tanh); }
+.leg-swatch.bar-sigmoid { background: var(--sigmoid); }
+.leg-swatch.bar-weight { background: var(--weight); }
+.leg-swatch.bar-ghost { background: var(--text-ghost); }
+.leg-swatch.bar-bad { background: var(--bad); }
+.leg-swatch.bar-good { background: var(--good); }
+
+/* ── the chip/flow layout language (primitive figures) ── */
+.flow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 10px 0; font-family: var(--mono); }
+.flow-op { color: var(--text-faint); font-size: 14px; }
+.flow-sub { color: var(--text-ghost); font-size: 12px; }
+.flow-cols { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
+.flow-cols > div { flex: 1 1 300px; }
+.circle-chart { flex: 0 0 auto; width: 210px; height: 210px; }
+.chip { display: inline-flex; align-items: baseline; gap: 6px; padding: 3px 9px; border-radius: 7px; font: 500 13px var(--mono); border: 1px solid var(--border); background: var(--panel-deep); color: var(--text); }
+.chip-label { font-size: 10.5px; color: var(--text-faint); text-transform: none; }
+.chip-in { border-color: rgba(69, 120, 140, 0.45); color: var(--sigmoid); }
+.chip-w { border-color: rgba(156, 97, 25, 0.4); color: var(--tanh); }
+.chip-out { border-color: rgba(124, 95, 136, 0.5); color: var(--weight); }
+.chip-ok { border-color: rgba(93, 125, 70, 0.45); color: var(--good); }
+.chip-err { border-color: rgba(168, 64, 47, 0.45); color: var(--bad); }
+.chip-dim { color: var(--text-dim); }
+
+/* the hero equation row: large labeled chips, few of them */
+.flow-hero { gap: 12px; margin: 16px 0; }
+.flow-hero .flow-op { font-size: 20px; }
+.chip-col { display: inline-block; text-align: center; padding: 8px 16px; border-radius: 10px; }
+.chip-col .chip-label { display: block; font-size: 10.5px; margin-bottom: 2px; }
+.chip-col .chip-value { display: block; font: 600 17px var(--mono); }
+
+/* verdict cards: model vs calculator vs error */
+.verdict { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin: 14px 0 4px; }
+.vcard { border: 1px solid var(--border); background: var(--panel-deep); border-radius: 10px; padding: 8px 16px; min-width: 130px; }
+.v-label { font: 500 10px var(--mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-faint); }
+.v-value { font: 600 15.5px var(--mono); margin-top: 3px; color: var(--text); }
+.vcard.v-model .v-value { color: var(--weight); }
+.vcard.v-model { border-color: rgba(124, 95, 136, 0.5); }
+.vcard.v-truth .v-value { color: var(--text-dim); }
+.vcard.v-ok { border-color: rgba(93, 125, 70, 0.45); }
+.vcard.v-ok .v-value { color: var(--good); }
+.vcard.v-bad { border-color: rgba(168, 64, 47, 0.45); }
+.vcard.v-bad .v-value { color: var(--bad); }
+.v-route { font: 400 12px var(--mono); color: var(--text-ghost); flex-basis: 100%; }
+
+/* step-by-step walkthroughs: expanded by default (no-JS, PDF); with JS the
+   label becomes a toggle and they start collapsed. */
+.steps { margin: 12px 0 2px; border-top: 1px dashed var(--border); padding-top: 8px; }
+.steps-label { font: 500 11.5px var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); }
+.steps ol { margin: 10px 0 0; padding-left: 4px; font-size: 13.5px; color: var(--text-dim); list-style: none; counter-reset: step; }
+.steps li { margin: 8px 0; line-height: 2; counter-increment: step; position: relative; padding-left: 32px; }
+.steps li::before { content: counter(step); position: absolute; left: 0; top: 5px; width: 21px; height: 21px; border-radius: 50%; background: var(--sigmoid); color: #fbf7ee; font: 600 11.5px var(--mono); display: flex; align-items: center; justify-content: center; }
+.js .steps-label { cursor: pointer; }
+.js .steps-label::after { content: " ▸"; color: var(--text-ghost); }
+.js .steps.open .steps-label::after { content: " ▾"; }
+.js .steps ol { display: none; }
+.js .steps.open ol { display: block; }
+
+/* trig product grid */
+.tp-grid { display: grid; grid-template-columns: repeat(2, minmax(150px, 220px)); gap: 10px; margin: 12px 0; }
+.tp-cell { border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; background: var(--panel-deep); }
+.tp-cell.tp-selected { border-color: var(--weight); box-shadow: 0 0 10px rgba(124, 95, 136, 0.2); }
+.tp-name { font: 500 12px var(--mono); color: var(--text-dim); }
+.tp-val { font: 500 15px var(--mono); color: var(--text); margin-top: 2px; }
+.tp-selected .tp-val { color: var(--weight); }
+.tp-coeff { font: 400 11px var(--mono); color: var(--text-ghost); margin-top: 2px; }
+
+/* optimizer matrix (embedded measured results; cell colors are data) */
+.om-row { display: flex; gap: 20px; flex-wrap: wrap; flex-direction: column; }
+.om-panel { min-width: 0; overflow-x: auto; }
+.om-label { font: 500 12px var(--mono); color: var(--text-dim); margin-bottom: 8px; }
+.om-table { border-collapse: collapse; font: 500 13.5px var(--mono); width: 100%; }
+.om-table th { color: var(--text-faint); font-weight: 500; padding: 6px 10px; text-align: right; border: none; background: none; }
+.om-table tr:first-child th { text-align: center; vertical-align: bottom; padding: 6px 5px; font-size: 11px; overflow-wrap: break-word; }
+.om-table td { text-align: center; padding: 10px 12px; border: 1px solid var(--bg); min-width: 40px; }
+
+/* hill-surface readout */
+.hs-map { max-width: 720px; margin: 0 auto; display: block; }
+.hs-readout { margin-top: 10px; justify-content: center; }

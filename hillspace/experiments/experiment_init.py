@@ -11,7 +11,6 @@ import pandas as pd
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
-from schedulefree import AdamWScheduleFree
 
 from ..dataset.operator_dataset import create_mathy_dataloaders
 from ..dataset.operator_specs import OPERATION_REGISTRY
@@ -110,8 +109,7 @@ def train_initialization_model(
     init_scale: float,
     device: str = "cpu",
     seed: int = 42,
-    max_epochs: int = 10,
-    use_schedulefree: bool = True,
+    max_epochs: int = 100,
     eval_frequency: int = 5,
 ) -> Tuple[MathyUnit, Dict[str, float], int]:
     """Train Hill Space model with specific initialization scale."""
@@ -180,41 +178,32 @@ def train_initialization_model(
         input_size=2,
         output_size=1,
         dtype=torch.float64,
-        space="hill_snap",
+        space="hill",
         init_scale=init_scale,
     )
     model.to(device)
 
-    # Training setup
-    betas = (0.9, 0.96)
-    weight_decay = 1e-8
-    eps = 1e-8
-
-    if use_schedulefree:
-        optimizer = AdamWScheduleFree(
-            model.get_arithmetic_parameters(),
-            lr=0.1,
-            betas=betas,
-            weight_decay=weight_decay,
-            eps=eps,
-        )
-    else:
-        optimizer = torch.optim.AdamW(
-            model.get_arithmetic_parameters(),
-            lr=0.1,
-            betas=betas,
-            weight_decay=weight_decay,
-            eps=eps,
-        )
+    # Training setup. beta2=0.5 (not the default 0.999) is deliberate: reaching a
+    # weight of exactly +-1 requires driving the raw parameter deep into
+    # saturation, and a high beta2 keeps a stale-large second-moment estimate that
+    # brakes the step on the flat optimum, stalling short (multiply then fails
+    # because the exponential primitive amplifies the shortfall). A short beta2
+    # memory tracks the shrinking gradient and keeps pushing into saturation.
+    # Verified across 10 seeds: beta2=0.5 converges all ops; beta2=0.999 fails
+    # multiply. (Standalone "Path A"; the snapping path reaches exact values with
+    # any optimizer, for embedding in larger networks.)
+    optimizer = torch.optim.Adam(
+        model.get_arithmetic_parameters(),
+        lr=0.1,
+        betas=(0.9, 0.5),
+        eps=1e-8,
+    )
 
     criterion = nn.MSELoss()
 
     converged_epoch = None
-    convergence_threshold = 1e-8
+    convergence_threshold = 1e-14
     recent_losses = []
-
-    if use_schedulefree:
-        optimizer.train()
 
     # Training loop
     for epoch in range(1, max_epochs + 1):
@@ -252,15 +241,9 @@ def train_initialization_model(
 
         # Periodic evaluation
         if epoch % eval_frequency == 0 or epoch <= 10:
-            if use_schedulefree:
-                optimizer.eval()
-
             eval_losses, eval_all_converged = periodic_eval(
                 model, quick_eval_loaders, operations, device, convergence_threshold
             )
-
-            if use_schedulefree:
-                optimizer.train()
 
             model.train()
 
@@ -282,9 +265,6 @@ def train_initialization_model(
 
         elif epoch % 10 == 0:  # Print every 10 epochs if no eval
             print(f"  Epoch {epoch:03d}, Loss: {avg_epoch_loss:.10f}")
-
-    if use_schedulefree:
-        optimizer.eval()
 
     # Final evaluation on extreme extrapolation range
     results = evaluate_model(model, test_loaders, operations, device)
@@ -316,13 +296,12 @@ def run_single_initialization_analysis(run_id: int) -> str:
     ]
 
     # Initialization scales to test
-    init_scales = [0.0, 0.02, 1e-8, 1.0, 3.0, 10.0]
+    init_scales = [0.0, 0.01, 0.1, 1.0, 3.0]
     device = "cpu"
-    use_schedulefree = True  # Set to False to use standard AdamW
 
     # Generate a unique seed for this run
     seed = random.randint(0, 100000)
-    optimizer_name = "schedulefree" if use_schedulefree else "adamw"
+    optimizer_name = "adam"
     results_file = (
         f"results/init_analysis_run_{run_id:02d}_seed_{seed}_{optimizer_name}.json"
     )
@@ -346,7 +325,6 @@ def run_single_initialization_analysis(run_id: int) -> str:
             init_scale=init_scale,
             device=device,
             seed=seed,
-            use_schedulefree=use_schedulefree,
             eval_frequency=5,  # Evaluate every 5 epochs
         )
 
@@ -416,25 +394,17 @@ def aggregate_initialization_results():
     operations = all_results[0]["operations"]
     init_scales = [float(scale) for scale in all_results[0]["init_scales"]]
 
-    # Build aggregate data structure (and calcualate STD)
+    # Build aggregate data structure: mean and std of MSE across runs.
     aggregate_data = {}
     for operation in operations:
         aggregate_data[operation] = {}
         for init_scale in init_scales:
-            mse_values = []
-            std_values = []
-            for run_data in all_results:
-
-                mse = run_data["results"][str(init_scale)]["mse_results"][operation]
-                mse_values.append(mse)
-
-                std = np.std(mse_values)
-                std_values.append(std)
-
-            # Calculate mean MSE across all runs
+            mse_values = [
+                run_data["results"][str(init_scale)]["mse_results"][operation]
+                for run_data in all_results
+            ]
             aggregate_data[operation][init_scale] = np.mean(mse_values)
-            # Store standard deviation for reference
-            aggregate_data[operation][f"{init_scale}_std"] = np.mean(std_values)
+            aggregate_data[operation][f"{init_scale}_std"] = np.std(mse_values)
 
     # Format numbers for markdown table
     def format_mse(value):
@@ -503,10 +473,6 @@ def aggregate_initialization_results():
             if std_value > 0:
                 formatted_mse = f"{formatted_mse} ± {formatted_std}"
 
-            # If it's 1e-16 or less, format as 0.0
-            if mse_value <= 1e-16:
-                formatted_mse = "0.0"
-
             row_values.append(f"{formatted_mse:>10}")
 
         print(f"| {display_name:10} | " + " | ".join(row_values) + " |")
@@ -560,5 +526,5 @@ def aggregate_initialization_results():
 
 if __name__ == "__main__":
     torch.multiprocessing.set_start_method("spawn", force=True)
-    # run_initialization_analysis(num_processes=6)
+    run_initialization_analysis(num_processes=6)
     aggregate_initialization_results()

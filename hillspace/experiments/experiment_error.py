@@ -1,591 +1,500 @@
+"""Floating-point error floors for exact hill-space selections, paper §4.4.
+
+The question: once a unit's selection is EXACTLY [1, ±1], what error remains,
+and where does it come from? Each operation/dtype is evaluated through up to
+four pathways against high-precision ground truth:
+
+  native      -- the literal IEEE op (x+y, x-y, x*y, x/y) in the working
+                 dtype. This is THE floating-point floor: a correctly rounded
+                 op sits within 0.5 ulp of real arithmetic by construction.
+  analytical  -- the hill-space formulation with weights fixed at the exact
+                 selection: matmul for add/sub, prod(pow(x, w)) for mul/div.
+                 Measures what the formulation adds over the native op.
+                 (Verified bitwise-identical to native for add/sub/mul on
+                 torch 2.7 CPU; divide computes x*(1/y), two roundings
+                 instead of one. The JSON records the equality fraction.)
+  complex128  -- exponential-primitive stabilization via complex arithmetic,
+                 cast back to the working dtype. Multiply/divide only.
+  logspace    -- exponential-primitive stabilization via log/exp using
+                 iNALU's published guards (magnitude floor eps=1e-7,
+                 exponent cap omega=20 [@schlor2020]) plus exact sign
+                 recovery: sign(x)*sign(y), exact for weights ±1. iNALU must
+                 LEARN its sign mechanism; recovering it exactly here
+                 isolates the precision cost of the log/exp round trip from
+                 that separate hazard. Multiply/divide only.
+
+Ground truth and metric (v2, 2026-07 rework):
+  The first version of this experiment had two measurement artifacts.
+  Decimal(str(x)) perturbed each input by up to half an ulp, so the float64
+  "floor" rows reported decimal-string round-trip noise; and rounding the
+  exact result to float64 before differencing makes any correctly rounded
+  float64 op measure exactly zero. v2 converts inputs exactly (Decimal(x)
+  is exact for binary floats), computes the reference in 50-digit Decimal,
+  and carries it as a two-term value gt64 + resid, where gt64 is the
+  reference rounded to float64 and resid the exact remainder. Per-sample
+  error is then (result - gt64) - resid in float64 arithmetic, accurate to
+  ~1 part in 1e16 of the error itself and non-degenerate at float64.
+
+Inputs: U(-1e4, 1e4)^2, the extreme extrapolation range of §4.3; divide
+masks |y| > 1e-10. Seeding: SeedSequence(20260724, config_index, batch).
+CPU only. The Decimal loop dominates: expect roughly 10-30 minutes per
+config at 100M samples, with the 8 configs spread over --processes workers.
+Memory is ~3 GB per worker at 100M samples (squared errors are kept for
+exact percentiles).
+
+A second mode (--sweep) asks the scale question instead of the precision
+question: log-uniform magnitudes spanning the dtype's whole normal range
+(random sign, exponent uniform over the format's normal exponents). MSE is
+meaningless there — squared errors at 1e300 scale overflow float64 — so
+each pathway is scored against the native op in the format's own currency:
+bitwise agreement and ulp distance, with non-finite results counted on
+both sides. No Decimal reference is involved, so the sweep runs in minutes.
+"""
+
+import argparse
+import glob
 import json
 import os
-import glob
-import decimal
-from multiprocessing import Pool, cpu_count
-from typing import Dict, Tuple
+import time
 from decimal import Decimal, getcontext
+from multiprocessing import Pool
+from typing import Any, Callable, Dict, List, Tuple
 
 import numpy as np
-import pandas as pd
 import torch
 
-# Set high precision for ground truth calculations
 getcontext().prec = 50
 
+SEED_ROOT = 20260724
+INPUT_RANGE = 1e4
+DIVIDE_Y_MASK = 1e-10
+LOGSPACE_EPS = 1e-7  # iNALU magnitude floor
+LOGSPACE_OMEGA = 20.0  # iNALU exponent cap
 
-class ComprehensiveHillSpace:
-    """Hill Space with all 4 implementation variants for error analysis."""
-
-    def __init__(
-        self, dtype=torch.float64, eps: float = 1e-7, target_range: float = 5.0
-    ):
-        self.dtype = dtype
-        self.eps = eps
-        self.target_range = target_range
-
-        # Perfect analytical weights (bypass hill space entirely) - baseline method
-        self.analytical_weights = {
-            "add": torch.tensor([1.0, 1.0], dtype=dtype),
-            "subtract": torch.tensor([1.0, -1.0], dtype=dtype),
-            "multiply": torch.tensor([1.0, 1.0], dtype=dtype),
-            "divide": torch.tensor([1.0, -1.0], dtype=dtype),
-        }
-
-    def analytical_primitive(
-        self, inputs: torch.Tensor, operation: str
-    ) -> torch.Tensor:
-        """Method 1: Pure analytical weights (baseline)"""
-        weights = self.analytical_weights[operation]
-
-        if operation in ["add", "subtract"]:
-            return torch.matmul(inputs, weights)
-        elif operation in ["multiply", "divide"]:
-            return torch.prod(torch.pow(inputs, weights.unsqueeze(0)), dim=1)
-        else:
-            raise ValueError(f"Unknown operation: {operation}")
-
-    def complex_primitive(
-        self, inputs: torch.Tensor, operation: str, use_complex128: bool = False
-    ) -> torch.Tensor:
-        """Method 2: Complex number conversion"""
-        weights = self.analytical_weights[operation]
-
-        if operation in ["add", "subtract"]:
-            return torch.matmul(inputs, weights)
-        elif operation in ["multiply", "divide"]:
-            # Convert to complex to handle negative bases with fractional exponents
-            complex_dtype = torch.complex128 if use_complex128 else torch.complex64
-            x_complex = inputs.to(complex_dtype)
-            # Compute x^w using complex arithmetic 
-            powered = torch.pow(x_complex, weights.unsqueeze(0))
-            # Take product across input dimensions
-            result_complex = torch.prod(powered, dim=1)
-            # Convert back to real
-            return result_complex.real.to(self.dtype)
-        else:
-            raise ValueError(f"Unknown operation: {operation}")
-
-    def logspace_primitive(self, inputs: torch.Tensor, operation: str) -> torch.Tensor:
-        """Method 3: iNALU log-space computation"""
-        weights = self.analytical_weights[operation]
-
-        if operation in ["add", "subtract"]:
-            return torch.matmul(inputs, weights)
-        elif operation in ["multiply", "divide"]:
-            # Log-space computation with stability
-            x_abs = torch.abs(inputs) + self.eps
-            log_x = torch.clamp(torch.log(x_abs), min=-10, max=10)
-            result = torch.exp(torch.matmul(log_x, weights))
-            result = torch.clamp(result, min=-1e6, max=1e6)
-            return result
-        else:
-            raise ValueError(f"Unknown operation: {operation}")
+OP_ORDER = ["add", "subtract", "multiply", "divide"]
+WEIGHTS = {
+    "add": [1.0, 1.0],
+    "subtract": [1.0, -1.0],
+    "multiply": [1.0, 1.0],
+    "divide": [1.0, -1.0],
+}
+RESULT_GLOB = "results/error_floor_*.json"
+SWEEP_GLOB = "results/error_sweep_*.json"
+# smallest/largest normal binary exponents per dtype (subnormal inputs and
+# overflow are then produced by the operations themselves, not the sampler)
+SWEEP_EXPONENTS = {torch.float32: (-126.0, 127.0), torch.float64: (-1022.0, 1023.0)}
 
 
-def compute_ground_truth(inputs_np: np.ndarray, operation: str) -> np.ndarray:
-    """Compute ground truth using high-precision Decimal arithmetic."""
-    results = []
-
-    for i in range(len(inputs_np)):
-        try:
-            x_val = float(np.float64(inputs_np[i, 0]))
-            y_val = (
-                float(np.float64(inputs_np[i, 1])) if inputs_np.shape[1] > 1 else 0.0
-            )
-
-            if not np.isfinite(x_val) or not np.isfinite(y_val):
-                results.append(np.nan)
-                continue
-
-            x_dec = Decimal(str(x_val))
-            y_dec = Decimal(str(y_val))
-
-            if operation == "add":
-                result = x_dec + y_dec
-            elif operation == "subtract":
-                result = x_dec - y_dec
-            elif operation == "multiply":
-                result = x_dec * y_dec
-            elif operation == "divide":
-                if abs(y_dec) > Decimal("1e-20"):
-                    result = x_dec / y_dec
-                else:
-                    results.append(np.nan)
-                    continue
-            else:
-                raise ValueError(f"Unknown operation: {operation}")
-
-            result_float64 = float(result)
-            if not np.isfinite(result_float64):
-                results.append(np.nan)
-            else:
-                results.append(result_float64)
-
-        except (decimal.InvalidOperation, decimal.Overflow, ValueError, OverflowError):
-            results.append(np.nan)
-
-    return np.array(results)
+def native_op(inputs: torch.Tensor, operation: str) -> torch.Tensor:
+    x, y = inputs[:, 0], inputs[:, 1]
+    if operation == "add":
+        return x + y
+    if operation == "subtract":
+        return x - y
+    if operation == "multiply":
+        return x * y
+    return x / y
 
 
-def generate_test_inputs(
-    num_samples: int, dtype: torch.dtype, seed: int = 42
+def analytical_primitive(inputs: torch.Tensor, operation: str) -> torch.Tensor:
+    weights = torch.tensor(WEIGHTS[operation], dtype=inputs.dtype)
+    if operation in ("add", "subtract"):
+        return torch.matmul(inputs, weights)
+    return torch.prod(torch.pow(inputs, weights.unsqueeze(0)), dim=1)
+
+
+def complex_primitive(inputs: torch.Tensor, operation: str) -> torch.Tensor:
+    weights = torch.tensor(WEIGHTS[operation], dtype=torch.complex128)
+    powered = torch.pow(inputs.to(torch.complex128), weights.unsqueeze(0))
+    return torch.prod(powered, dim=1).real.to(inputs.dtype)
+
+
+def logspace_primitive(inputs: torch.Tensor, operation: str) -> torch.Tensor:
+    weights = torch.tensor(WEIGHTS[operation], dtype=inputs.dtype)
+    log_mag = torch.log(torch.clamp(torch.abs(inputs), min=LOGSPACE_EPS))
+    exponent = torch.clamp(torch.matmul(log_mag, weights), max=LOGSPACE_OMEGA)
+    # sign(x)^w for w = ±1 is sign(x) either way, so the exact sign of the
+    # result is the plain product of input signs
+    sign = torch.prod(torch.sign(inputs), dim=1)
+    return sign * torch.exp(exponent)
+
+
+def generate_batch(
+    num_samples: int, dtype: torch.dtype, config_index: int, batch_index: int
 ) -> torch.Tensor:
-    """Generate test inputs from U(-1e4, 1e4) to match other experiments."""
-    np.random.seed(seed)
-    samples = np.random.uniform(-1e4, 1e4, (num_samples, 2))
-    np.random.shuffle(samples)
+    rng = np.random.default_rng(
+        np.random.SeedSequence([SEED_ROOT, config_index, batch_index])
+    )
+    samples = rng.uniform(-INPUT_RANGE, INPUT_RANGE, (num_samples, 2))
     return torch.tensor(samples, dtype=dtype)
 
 
-def analyze_method_errors(
+def ground_truth_two_term(
+    inputs: np.ndarray, operation: str
+) -> Tuple[np.ndarray, np.ndarray]:
+    """Exact reference per sample as gt64 + resid.
+
+    Decimal(x) is an exact conversion for binary floats. gt64 is the exact
+    result rounded once to float64; resid = exact - gt64 satisfies
+    |resid| <= 0.5 ulp(gt64), so (r - gt64) - resid recovers a method's true
+    error to ~1e-16 relative accuracy without keeping Decimals around.
+    """
+    n = len(inputs)
+    gt64 = np.empty(n)
+    resid = np.empty(n)
+    for i in range(n):
+        x = Decimal(float(inputs[i, 0]))
+        y = Decimal(float(inputs[i, 1]))
+        if operation == "add":
+            exact = x + y
+        elif operation == "subtract":
+            exact = x - y
+        elif operation == "multiply":
+            exact = x * y
+        else:
+            exact = x / y
+        g = float(exact)
+        gt64[i] = g
+        resid[i] = float(exact - Decimal(g)) if np.isfinite(g) else np.nan
+    return gt64, resid
+
+
+def methods_for(operation: str) -> Dict[str, Callable[[torch.Tensor, str], torch.Tensor]]:
+    methods = {"native": native_op, "analytical": analytical_primitive}
+    if operation in ("multiply", "divide"):
+        methods["complex128"] = complex_primitive
+        methods["logspace"] = logspace_primitive
+    return methods
+
+
+def analyze_config(
+    config_index: int,
     operation: str,
     dtype: torch.dtype,
-    num_samples: int = 100_000_000,
-    seed: int = 42,
-    batch_size: int = 100_000,
-) -> Dict[str, float]:
-    """Analyze errors for all 4 methods against ground truth."""
+    num_samples: int,
+    batch_size: int,
+) -> Dict[str, Any]:
+    tag = f"{operation}/{str(dtype).replace('torch.', '')}"
+    methods = methods_for(operation)
 
-    hill_space = ComprehensiveHillSpace(dtype)
+    squared = {name: np.empty(num_samples) for name in methods}
+    counts = {name: {"n": 0, "nan": 0, "inf": 0} for name in methods}
+    native_equal = {name: 0 for name in methods}
+    total_valid = 0
+    start = time.time()
 
-    # Storage for all errors
-    method_errors = {
-        "analytical": {"squared_errors": [], "nan_count": 0, "inf_count": 0},
-        "complex64": {"squared_errors": [], "nan_count": 0, "inf_count": 0},
-        "complex128": {"squared_errors": [], "nan_count": 0, "inf_count": 0},
-        "logspace": {"squared_errors": [], "nan_count": 0, "inf_count": 0},
-    }
-
-    total_processed = 0
-
-    print(f"Processing {num_samples:,} samples for {operation} with {dtype}")
-
-    for batch_start in range(0, num_samples, batch_size):
-        current_batch_size = min(batch_size, num_samples - batch_start)
-        batch_seed = seed + (batch_start // batch_size)
-
-        if batch_start % (batch_size * 10) == 0:
-            print(f"  Processed {batch_start:,}/{num_samples:,} samples...")
-
-        # Generate batch
-        batch_inputs = generate_test_inputs(current_batch_size, dtype, batch_seed)
-
-        # Skip problematic cases for division
+    num_batches = (num_samples + batch_size - 1) // batch_size
+    for batch_index in range(num_batches):
+        n = min(batch_size, num_samples - batch_index * batch_size)
+        batch = generate_batch(n, dtype, config_index, batch_index)
         if operation == "divide":
-            mask = torch.abs(batch_inputs[:, 1]) > 1e-10
-            batch_inputs = batch_inputs[mask]
-
-        if len(batch_inputs) == 0:
+            batch = batch[torch.abs(batch[:, 1]) > DIVIDE_Y_MASK]
+        if len(batch) == 0:
             continue
 
-        # Compute ground truth
-        batch_inputs_np = batch_inputs.detach().cpu().numpy()
-        ground_truth = compute_ground_truth(batch_inputs_np, operation)
-        ground_truth_tensor = torch.tensor(ground_truth, dtype=torch.float64)
+        gt64, resid = ground_truth_two_term(batch.double().numpy(), operation)
+        gt_valid = np.isfinite(gt64) & np.isfinite(resid)
+        total_valid += int(gt_valid.sum())
 
-        # Compute results for all methods
-        methods = {
-            "analytical": lambda x: hill_space.analytical_primitive(x, operation),
-            "complex64": lambda x: hill_space.complex_primitive(
-                x, operation, use_complex128=False
-            ),
-            "complex128": lambda x: hill_space.complex_primitive(
-                x, operation, use_complex128=True
-            ),
-            "logspace": lambda x: hill_space.logspace_primitive(x, operation),
+        native_result = None
+        for name, fn in methods.items():
+            result = fn(batch, operation).double().numpy()
+            if name == "native":
+                native_result = result
+            counts[name]["nan"] += int(np.isnan(result).sum())
+            counts[name]["inf"] += int(np.isinf(result).sum())
+            native_equal[name] += int((result == native_result).sum())
+
+            valid = gt_valid & np.isfinite(result)
+            err = (result[valid] - gt64[valid]) - resid[valid]
+            block = err * err
+            k = counts[name]["n"]
+            squared[name][k : k + len(block)] = block
+            counts[name]["n"] = k + len(block)
+
+        if (batch_index + 1) % 25 == 0 or batch_index + 1 == num_batches:
+            elapsed = time.time() - start
+            print(
+                f"[{tag}] batch {batch_index + 1}/{num_batches} ({elapsed:.0f}s)",
+                flush=True,
+            )
+
+    stats = {}
+    for name in methods:
+        se = squared[name][: counts[name]["n"]]
+        if len(se) == 0:
+            stats[name] = {"num_samples": 0}
+            continue
+        stats[name] = {
+            "num_samples": int(len(se)),
+            "nan_count": counts[name]["nan"],
+            "inf_count": counts[name]["inf"],
+            "bitwise_equal_native_frac": native_equal[name] / max(total_valid, 1),
+            "mse": float(np.mean(se)),
+            "median_se": float(np.median(se)),
+            "q99_se": float(np.percentile(se, 99)),
+            "q99_99_se": float(np.percentile(se, 99.99)),
+            "max_se": float(np.max(se)),
         }
 
-        for method_name, method_func in methods.items():
-            try:
-                result = method_func(batch_inputs)
-                result_f64 = result.double()
-
-                # Count NaN/Inf
-                nan_mask = torch.isnan(result_f64)
-                inf_mask = torch.isinf(result_f64)
-                method_errors[method_name]["nan_count"] += nan_mask.sum().item()
-                method_errors[method_name]["inf_count"] += inf_mask.sum().item()
-
-                # Calculate squared errors (excluding NaN/Inf from ground truth)
-                valid_ground_truth = torch.isfinite(ground_truth_tensor)
-                valid_result = torch.isfinite(result_f64)
-                valid_mask = valid_ground_truth & valid_result
-
-                if valid_mask.sum() > 0:
-                    squared_errors = (
-                        result_f64[valid_mask] - ground_truth_tensor[valid_mask]
-                    ) ** 2
-                    method_errors[method_name]["squared_errors"].extend(
-                        squared_errors.detach().cpu().numpy().astype(np.float64)
-                    )
-
-            except Exception as e:
-                print(f"Error in {method_name}: {e}")
-                # Count as NaN
-                method_errors[method_name]["nan_count"] += len(batch_inputs)
-
-        total_processed += len(batch_inputs)
-
-    print(f"  Completed! Processed {total_processed:,} valid samples")
-
-    # Calculate statistics for each method
-    results = {}
-    for method_name, errors in method_errors.items():
-        if len(errors["squared_errors"]) > 0:
-            squared_errors_np = np.array(errors["squared_errors"])
-
-            results[method_name] = {
-                "num_samples": len(squared_errors_np),
-                "nan_count": errors["nan_count"],
-                "inf_count": errors["inf_count"],
-                "nan_rate": (
-                    errors["nan_count"] / total_processed if total_processed > 0 else 0
-                ),
-                "inf_rate": (
-                    errors["inf_count"] / total_processed if total_processed > 0 else 0
-                ),
-                "mean_squared_error": float(np.mean(squared_errors_np)),
-                "max_squared_error": float(np.max(squared_errors_np)),
-                "median_squared_error": float(np.median(squared_errors_np)),
-                "q99_squared_error": float(np.percentile(squared_errors_np, 99)),
-                "q99_9_squared_error": float(np.percentile(squared_errors_np, 99.9)),
-                "q99_99_squared_error": float(np.percentile(squared_errors_np, 99.99)),
-                "std_squared_error": float(np.std(squared_errors_np)),
-            }
-        else:
-            results[method_name] = {
-                "num_samples": 0,
-                "nan_count": errors["nan_count"],
-                "inf_count": errors["inf_count"],
-                "nan_rate": (
-                    errors["nan_count"] / total_processed if total_processed > 0 else 0
-                ),
-                "inf_rate": (
-                    errors["inf_count"] / total_processed if total_processed > 0 else 0
-                ),
-                "mean_squared_error": float("nan"),
-                "max_squared_error": float("nan"),
-                "median_squared_error": float("nan"),
-                "q99_squared_error": float("nan"),
-                "q99_9_squared_error": float("nan"),
-                "q99_99_squared_error": float("nan"),
-                "std_squared_error": float("nan"),
-            }
-
-    # Add metadata
-    final_results = {
+    return {
         "operation": operation,
         "dtype": str(dtype),
-        "total_samples_processed": total_processed,
-        "methods": results,
+        "total_samples": total_valid,
+        "elapsed_s": round(time.time() - start, 1),
+        "seed_root": SEED_ROOT,
+        "config_index": config_index,
+        "methods": stats,
     }
 
-    return final_results
+
+def run_config(params: Tuple[int, str, torch.dtype, int, int]) -> Dict[str, Any]:
+    config_index, operation, dtype, num_samples, batch_size = params
+    tag = f"{operation}/{str(dtype).replace('torch.', '')}"
+    print(f"[{tag}] starting: {num_samples:,} samples", flush=True)
+    result = analyze_config(config_index, operation, dtype, num_samples, batch_size)
+    path = f"results/error_floor_{operation}_{str(dtype).replace('torch.', '')}.json"
+    with open(path, "w") as f:
+        json.dump(result, f, indent=2)
+    print(f"[{tag}] done in {result['elapsed_s']}s -> {path}", flush=True)
+    return result
 
 
-def run_single_comprehensive_analysis(run_params: Tuple[int, str, torch.dtype]) -> Dict:
-    """Run comprehensive analysis for one operation/dtype combination."""
-    run_id, operation, dtype = run_params
-    delay = min(30, run_id * 5)  # Stagger starts by 2x their run_id in seconds
-    # Sleep run_id seconds to stagger starts
-    print(
-        f"[{run_id:02d}] Preparing to run comprehensive analysis: {operation} with {dtype} in {delay}s"
-    )
-    import time
-
-    time.sleep(delay)  # Stagger starts by 2x their run_id in seconds
-    print(f"[{run_id:02d}] Starting comprehensive analysis: {operation} with {dtype}")
-
-    try:
-        start_time = time.time()
-
-        stats = analyze_method_errors(
-            operation=operation,
-            dtype=dtype,
-            seed=42 + run_id,
-        )
-
-        elapsed = time.time() - start_time
-        print(f"[{run_id:02d}] Completed {operation} with {dtype} in {elapsed:.1f}s")
-
-        stats["run_id"] = run_id
-        stats["success"] = True
-        stats["elapsed_time"] = elapsed
-
-        # Save individual result
-        result_file = f"results/comprehensive_analysis_{operation}_{str(dtype).replace('torch.', '')}.json"
-        with open(result_file, "w") as f:
-            json.dump(stats, f, indent=2)
-
-        return stats
-
-    except Exception as e:
-        import traceback
-
-        print(traceback.format_exc())
-
-        elapsed = time.time() - start_time if "start_time" in locals() else 0
-        error_msg = f"Error analyzing {operation} with {dtype}: {str(e)}"
-        print(f"[{run_id:02d}] {error_msg}")
-
-        error_result = {
-            "run_id": run_id,
-            "operation": operation,
-            "dtype": str(dtype),
-            "success": False,
-            "error": str(e),
-            "elapsed_time": elapsed,
-        }
-
-        return error_result
+def format_se(value: float) -> str:
+    if value == 0.0:
+        return "0.0"
+    return f"{value:.1e}" if abs(value) < 1e-15 else f"{value:.2e}"
 
 
-def run_comprehensive_analysis(num_processes: int = None):
-    """Run comprehensive error analysis across all methods."""
-
-    if num_processes is None:
-        num_processes = min(cpu_count(), 4)
-
-    operations = ["add", "subtract", "multiply", "divide"]
-    dtypes = [torch.float32, torch.float64]
-
-    # Create parameter combinations
-    run_params = []
-    run_id = 0
-    for dtype in dtypes:
-        for operation in operations:
-            run_params.append((run_id, operation, dtype))
-            run_id += 1
-
-    print(f"Running comprehensive analysis with {num_processes} processes")
-    print(f"Total combinations: {len(run_params)}")
-    print(f"Testing all 4 methods per combination")
-
-    # Create results directory
-    os.makedirs("results", exist_ok=True)
-
-    # Run analysis in parallel
-    try:
-        with Pool(processes=num_processes) as pool:
-            result = pool.map_async(run_single_comprehensive_analysis, run_params)
-            results = result.get(timeout=7200)  # 2 hour timeout
-    except Exception as e:
-        print(f"Multiprocessing error: {e}")
-        results = []
-
+def load_results() -> List[Dict[str, Any]]:
+    results = []
+    for path in glob.glob(RESULT_GLOB):
+        with open(path) as f:
+            results.append(json.load(f))
+    order = {op: i for i, op in enumerate(OP_ORDER)}
+    results.sort(key=lambda r: (order[r["operation"]], r["dtype"]))
     return results
 
 
-def generate_comprehensive_error_table():
-    """Generate publication-ready comprehensive error comparison tables."""
-
-    # Load all results
-    individual_files = glob.glob("results/comprehensive_analysis_*.json")
-    if not individual_files:
-        print("No comprehensive analysis results found! Run the analysis first.")
+def print_tables() -> None:
+    results = load_results()
+    if not results:
+        print(f"No results matching {RESULT_GLOB}; run the analysis first.")
         return
 
-    all_results = []
-    for file in individual_files:
-        try:
-            with open(file, "r") as f:
-                result = json.load(f)
-                if result.get("success", False):
-                    all_results.append(result)
-        except:
-            continue
-
-    if not all_results:
-        print("No successful results found!")
-        return
-
-    # Format function
-    def format_error(value):
-        if np.isnan(value) or value == 0.0:
-            return "0.0"
-        elif value < 1e-15:
-            return f"{value:.1e}"
-        else:
-            return f"{value:.2e}"
-
-    print("\n" + "=" * 100)
-    print("HILL SPACE ERROR ANALYSIS - FLOATING-POINT BASELINE")
-    print("=" * 100)
-    print()
-
-    # Table 1: Analytical baseline (floating-point precision limits)
-    print("**Table 1: Floating-Point Precision Baseline**")
-    print(
-        "*100M+ samples per operation/dtype, analytical weights vs high-precision ground truth*"
-    )
-    print()
-
-    print(
-        "| Operation | Precision | Mean Squared Error | Max Error | 99.99%ile Error |"
-    )
-    print("|-----------|-----------|-------------------|-----------|-----------------|")
-
-    for result in sorted(all_results, key=lambda x: (x["operation"], x["dtype"])):
-        operation = result["operation"]
-        dtype_str = "Float32" if "float32" in result["dtype"] else "Float64"
-
-        analytical_stats = result["methods"]["analytical"]
-        mean_error = format_error(analytical_stats["mean_squared_error"])
-        max_error = format_error(analytical_stats["max_squared_error"])
-        q99_99_error = format_error(analytical_stats["q99_99_squared_error"])
-
+    print("\n**Table 4.4.1: Floating-Point Precision Baseline (native IEEE ops)**")
+    print("| Operation | Precision | Mean Squared Error | Max Error | 99.99%ile Error |")
+    print("| --------- | --------- | ------------------ | --------- | --------------- |")
+    for r in results:
+        m = r["methods"]["native"]
+        dtype = "Float32" if "float32" in r["dtype"] else "Float64"
         print(
-            f"| {operation:9} | {dtype_str:9} | {mean_error:>17} | {max_error:>9} | {q99_99_error:>15} |"
+            f"| {r['operation']} | {dtype} | {format_se(m['mse'])} "
+            f"| {format_se(m['max_se'])} | {format_se(m['q99_99_se'])} |"
         )
 
-    print()
-
-    # Table 2: Method comparison (streamlined)
-    print("**Table 2: Additional Error Beyond Floating-Point Baseline**")
-    print(
-        "*100M+ samples per operation/dtype/method, additional error introduced by each implementation method*"
-    )
-    print()
-
-    print(
-        "| Operation | Precision | Method | Additional MSE | Max Error | 99.99%ile Error |"
-    )
-    print(
-        "|-----------|-----------|--------|----------------|-----------|-----------------|"
-    )
-
-    for result in sorted(all_results, key=lambda x: (x["operation"], x["dtype"])):
-        operation = result["operation"]
-        dtype_str = "Float32" if "float32" in result["dtype"] else "Float64"
-
-        # Get analytical baseline
-        analytical_stats = result["methods"]["analytical"]
-        baseline_mse = analytical_stats["mean_squared_error"]
-
-        # Compare streamlined methods (exclude complex64 and normalized)
-        methods_to_compare = [
-            ("Complex128", "complex128"),
-            ("Log-space", "logspace"),
-        ]
-
-        for method_display, method_key in methods_to_compare:
-            if method_key not in result["methods"]:
+    print("\n**Table 4.4.2: Additional MSE Beyond the Native Floor**")
+    print("| Operation | Precision | Method | Additional MSE | Max Error | 99.99%ile Error |")
+    print("| --------- | --------- | ------ | -------------- | --------- | --------------- |")
+    label = {"analytical": "Real", "complex128": "Complex128", "logspace": "Log-space"}
+    for r in results:
+        baseline = r["methods"]["native"]["mse"]
+        dtype = "Float32" if "float32" in r["dtype"] else "Float64"
+        for key in ("analytical", "complex128", "logspace"):
+            if key not in r["methods"]:
                 continue
-
-            method_stats = result["methods"][method_key]
-
-            # Calculate additional error
-            method_mse = method_stats["mean_squared_error"]
-            additional_mse = (
-                method_mse - baseline_mse if not np.isnan(method_mse) else float("nan")
-            )
-
-            additional_mse_str = format_error(additional_mse)
-            max_error_str = format_error(method_stats["max_squared_error"])
-            q99_99_str = format_error(method_stats["q99_99_squared_error"])
-
+            m = r["methods"][key]
             print(
-                f"| {operation:9} | {dtype_str:9} | {method_display:8} | {additional_mse_str:>14} | {max_error_str:>9} | {q99_99_str:>15} |"
+                f"| {r['operation']} | {dtype} | {label[key]} "
+                f"| {format_se(m['mse'] - baseline)} | {format_se(m['max_se'])} "
+                f"| {format_se(m['q99_99_se'])} |"
             )
 
-    print()
-    print("**Key Findings:**")
-    print()
+    print("\nBitwise agreement with the native op (fraction of samples):")
+    for r in results:
+        dtype = "Float32" if "float32" in r["dtype"] else "Float64"
+        parts = [
+            f"{name}={m['bitwise_equal_native_frac']:.4f}"
+            for name, m in r["methods"].items()
+            if name != "native" and m.get("num_samples")
+        ]
+        print(f"  {r['operation']:9s} {dtype}: {', '.join(parts)}")
 
-    # Generate summary insights for multiplication (the problematic operation)
-    for result in all_results:
-        operation = result["operation"]
-        if operation == "multiply":
-            print(f"*{operation.title()} Operation Analysis:*")
 
-            analytical_mse = result["methods"]["analytical"]["mean_squared_error"]
-            dtype_str = "Float32" if "float32" in result["dtype"] else "Float64"
-
-            for method_name, method_key in [
-                ("Complex128", "complex128"),
-                ("Log-space", "logspace"),
-            ]:
-                if method_key in result["methods"]:
-                    method_stats = result["methods"][method_key]
-                    additional_error = (
-                        method_stats["mean_squared_error"] - analytical_mse
-                    )
-
-                    if analytical_mse != 0:
-                        ratio = additional_error / analytical_mse
-                        ratio_str = (
-                            f" ({ratio:.1e}x baseline)"
-                            if abs(ratio) > 1e-10
-                            else " (≈0x baseline)"
-                        )
-                    else:
-                        ratio_str = ""
-
-                    print(
-                        f"- {dtype_str} {method_name}: {format_error(additional_error)} additional MSE{ratio_str}"
-                    )
-            print()
-
-    print("**Methodology:**")
-    print("- Ground truth computed with 50-digit precision Decimal arithmetic")
-    print("- Additional error = Method MSE - Analytical MSE (floating-point baseline)")
-    print("- Input range: U(-1e4, 1e4) matching extreme extrapolation experiments")
-    print("- Complex128 uses 128-bit complex arithmetic (two 64-bit floats)")
-    print(
-        "- Log-space uses iNALU-style log/exp transformations with stability clamping"
+def generate_sweep_batch(
+    num_samples: int, dtype: torch.dtype, config_index: int, batch_index: int
+) -> torch.Tensor:
+    """Log-uniform magnitudes across the dtype's full normal range."""
+    rng = np.random.default_rng(
+        np.random.SeedSequence([SEED_ROOT, 1, config_index, batch_index])
     )
+    lo, hi = SWEEP_EXPONENTS[dtype]
+    exponent = rng.uniform(lo, hi, (num_samples, 2))
+    sign = rng.integers(0, 2, (num_samples, 2)) * 2 - 1
+    return torch.tensor(sign * np.exp2(exponent), dtype=dtype)
 
-    # Save detailed results
-    summary_data = []
-    for result in all_results:
-        analytical_baseline = result["methods"]["analytical"]["mean_squared_error"]
 
-        # Include analytical baseline
-        analytical_stats = result["methods"]["analytical"]
-        summary_data.append(
-            {
-                "operation": result["operation"],
-                "dtype": result["dtype"],
-                "method": "analytical",
-                "additional_mse": 0.0,
-                "absolute_mse": analytical_stats["mean_squared_error"],
-                "max_error": analytical_stats["max_squared_error"],
-                "q99_99_error": analytical_stats["q99_99_squared_error"],
-                "num_samples": analytical_stats["num_samples"],
-            }
-        )
+def float_ordinal(values: np.ndarray) -> np.ndarray:
+    """Map floats to integers so consecutive representable values are
+    consecutive integers (two's-complement trick); ulp distance becomes a
+    subtraction. ±0 share an ordinal."""
+    itype = np.int32 if values.dtype == np.float32 else np.int64
+    ordinals = values.view(itype).astype(np.int64)
+    negative = ordinals < 0
+    ordinals[negative] = np.int64(np.iinfo(itype).min) - ordinals[negative]
+    return ordinals
 
-        # Include comparison methods
-        for method_name in ["complex128", "logspace"]:
-            if method_name in result["methods"]:
-                method_stats = result["methods"][method_name]
-                additional_error = (
-                    method_stats["mean_squared_error"] - analytical_baseline
-                )
 
-                summary_data.append(
-                    {
-                        "operation": result["operation"],
-                        "dtype": result["dtype"],
-                        "method": method_name,
-                        "additional_mse": additional_error,
-                        "absolute_mse": method_stats["mean_squared_error"],
-                        "max_error": method_stats["max_squared_error"],
-                        "q99_99_error": method_stats["q99_99_squared_error"],
-                        "num_samples": method_stats["num_samples"],
-                    }
-                )
+def sweep_config(
+    config_index: int,
+    operation: str,
+    dtype: torch.dtype,
+    num_samples: int,
+    batch_size: int,
+) -> Dict[str, Any]:
+    """Score every pathway against the native op across the full range.
 
-    df = pd.DataFrame(summary_data)
-    df.to_csv("results/comprehensive_error_analysis.csv", index=False)
-    print(f"\nDetailed results saved to: results/comprehensive_error_analysis.csv")
+    Divide is unmasked here — tiny divisors and the over/underflow they
+    cause are the point. Ulp distances are exact below 2^53 and
+    approximate above (float64 differencing of ordinals)."""
+    tag = f"{operation}/{str(dtype).replace('torch.', '')}"
+    methods = {k: v for k, v in methods_for(operation).items() if k != "native"}
+
+    agree = {name: 0 for name in methods}
+    nonfinite = {name: 0 for name in methods}
+    ulps: Dict[str, list] = {name: [] for name in methods}
+    nonfinite_native = 0
+    start = time.time()
+
+    num_batches = (num_samples + batch_size - 1) // batch_size
+    for batch_index in range(num_batches):
+        n = min(batch_size, num_samples - batch_index * batch_size)
+        batch = generate_sweep_batch(n, dtype, config_index, batch_index)
+        r_nat = native_op(batch, operation).numpy()
+        nat_ord = float_ordinal(r_nat).astype(np.float64)
+        nat_finite = np.isfinite(r_nat)
+        nonfinite_native += int((~nat_finite).sum())
+
+        for name, fn in methods.items():
+            r = fn(batch, operation).numpy()
+            agree[name] += int(
+                ((r == r_nat) | (np.isnan(r) & np.isnan(r_nat))).sum()
+            )
+            nonfinite[name] += int((~np.isfinite(r)).sum())
+            both = nat_finite & np.isfinite(r)
+            d = np.abs(float_ordinal(r[both]).astype(np.float64) - nat_ord[both])
+            ulps[name].append(d.astype(np.float32))
+
+        if (batch_index + 1) % 25 == 0 or batch_index + 1 == num_batches:
+            print(f"[sweep {tag}] batch {batch_index + 1}/{num_batches} "
+                  f"({time.time() - start:.0f}s)", flush=True)
+
+    stats: Dict[str, Any] = {}
+    for name in methods:
+        d = np.concatenate(ulps[name]) if ulps[name] else np.empty(0, np.float32)
+        stats[name] = {
+            "bitwise_frac": agree[name] / num_samples,
+            "nonfinite_frac": nonfinite[name] / num_samples,
+            "both_finite": int(len(d)),
+            "ulp_le1_frac": float((d <= 1).mean()) if len(d) else float("nan"),
+            "ulp_q99_99": float(np.percentile(d, 99.99)) if len(d) else float("nan"),
+            "ulp_max": float(np.max(d)) if len(d) else float("nan"),
+        }
+
+    return {
+        "operation": operation,
+        "dtype": str(dtype),
+        "num_samples": num_samples,
+        "nonfinite_native_frac": nonfinite_native / num_samples,
+        "elapsed_s": round(time.time() - start, 1),
+        "seed_root": SEED_ROOT,
+        "config_index": config_index,
+        "methods": stats,
+    }
+
+
+def print_sweep_tables() -> None:
+    results = []
+    for path in glob.glob(SWEEP_GLOB):
+        with open(path) as f:
+            results.append(json.load(f))
+    if not results:
+        print(f"No results matching {SWEEP_GLOB}; run with --sweep first.")
+        return
+    order = {op: i for i, op in enumerate(OP_ORDER)}
+    results.sort(key=lambda r: (order[r["operation"]], r["dtype"]))
+
+    label = {"analytical": "Hill Space", "complex128": "Complex128", "logspace": "Log-space"}
+    print("\n**Full-Range Agreement Sweep (log-uniform over the dtype's normal range)**")
+    print("| Operation | Precision | Method | Bitwise = native | ≤1 ulp | 99.99%ile ulp | Max ulp | Non-finite (method / native) |")
+    print("| --------- | --------- | ------ | ---------------- | ------ | ------------- | ------- | ---------------------------- |")
+    for r in results:
+        dtype = "Float32" if "float32" in r["dtype"] else "Float64"
+        for key in ("analytical", "complex128", "logspace"):
+            if key not in r["methods"]:
+                continue
+            m = r["methods"][key]
+            print(
+                f"| {r['operation']} | {dtype} | {label[key]} "
+                f"| {m['bitwise_frac'] * 100:.4f}% | {m['ulp_le1_frac'] * 100:.4f}% "
+                f"| {m['ulp_q99_99']:.3g} | {m['ulp_max']:.3g} "
+                f"| {m['nonfinite_frac'] * 100:.3f}% / {r['nonfinite_native_frac'] * 100:.3f}% |"
+            )
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--samples", type=int, default=100_000_000)
+    parser.add_argument("--batch-size", type=int, default=250_000)
+    parser.add_argument("--processes", type=int, default=4)
+    parser.add_argument(
+        "--tables-only",
+        action="store_true",
+        help="regenerate tables from existing results without recomputing",
+    )
+    parser.add_argument(
+        "--sweep",
+        action="store_true",
+        help="full-dynamic-range agreement sweep (log-uniform exponents, ulp metrics)",
+    )
+    args = parser.parse_args()
+
+    if args.sweep:
+        os.makedirs("results", exist_ok=True)
+        configs = [
+            (i, operation, dtype)
+            for i, (dtype, operation) in enumerate(
+                (d, o) for d in (torch.float32, torch.float64) for o in OP_ORDER
+            )
+        ]
+        for config_index, operation, dtype in configs:
+            result = sweep_config(
+                config_index, operation, dtype, args.samples, args.batch_size
+            )
+            path = (
+                f"results/error_sweep_{operation}_"
+                f"{str(dtype).replace('torch.', '')}.json"
+            )
+            with open(path, "w") as f:
+                json.dump(result, f, indent=2)
+        print_sweep_tables()
+        return
+
+    if not args.tables_only:
+        os.makedirs("results", exist_ok=True)
+        configs = [
+            (i, operation, dtype, args.samples, args.batch_size)
+            for i, (dtype, operation) in enumerate(
+                (d, o) for d in (torch.float32, torch.float64) for o in OP_ORDER
+            )
+        ]
+        print(f"{len(configs)} configs, {args.samples:,} samples each, "
+              f"{args.processes} processes", flush=True)
+        with Pool(processes=args.processes) as pool:
+            pool.map(run_config, configs)
+
+    print_tables()
 
 
 if __name__ == "__main__":
-    # Run comprehensive analysis
-    print("Starting comprehensive Hill Space error analysis...")
-    # results = run_comprehensive_analysis(num_processes=2)
-
-    print("\nGenerating comprehensive error table...")
-    generate_comprehensive_error_table()
+    main()

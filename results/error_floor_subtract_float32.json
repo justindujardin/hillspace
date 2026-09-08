@@ -1,0 +1,32 @@
+{
+  "operation": "subtract",
+  "dtype": "torch.float32",
+  "total_samples": 100000000,
+  "elapsed_s": 315.0,
+  "seed_root": 20260724,
+  "config_index": 1,
+  "methods": {
+    "native": {
+      "num_samples": 100000000,
+      "nan_count": 0,
+      "inf_count": 0,
+      "bitwise_equal_native_frac": 1.0,
+      "mse": 5.2521398331781375e-08,
+      "median_se": 0.0,
+      "q99_se": 9.5367431640625e-07,
+      "q99_99_se": 9.5367431640625e-07,
+      "max_se": 9.5367431640625e-07
+    },
+    "analytical": {
+      "num_samples": 100000000,
+      "nan_count": 0,
+      "inf_count": 0,
+      "bitwise_equal_native_frac": 1.0,
+      "mse": 5.2521398331781375e-08,
+      "median_se": 0.0,
+      "q99_se": 9.5367431640625e-07,
+      "q99_99_se": 9.5367431640625e-07,
+      "max_se": 9.5367431640625e-07
+    }
+  }
+}
