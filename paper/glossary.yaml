@@ -1,0 +1,122 @@
+# 
+
+- term: gradient
+  forms: [gradient, gradients]
+  explain: >
+    How much a function's output changes as each input nudges, one number
+    per input, collected into a vector that points the way the output
+    climbs fastest. Training steps the other way.
+  concept: gradient
+
+- term: vanishing gradient
+  forms: [vanishing gradient, vanishing gradients, gradient vanishing]
+  explain: >
+    A gradient that has shrunk toward zero, so the steps taken along it
+    shrink too and the weight stops moving, whether or not it has arrived
+    where it should.
+
+- term: saturation
+  forms: [saturation, saturated, saturate, saturates]
+  explain: >
+    A squashing function flattening out at its limits. Deep in saturation
+    the output has reached its bound to the last bit and the slope is
+    gone, so nothing downstream can tell that the input moved.
+
+- term: tanh
+  forms: [tanh]
+  explain: >
+    The hyperbolic tangent: an S-shaped curve from −1 to 1, flat at both
+    ends and steepest at zero.
+  concept: nonlinearity
+
+- term: sigmoid
+  forms: [sigmoid]
+  explain: >
+    An S-shaped curve from 0 to 1, flat at both ends, written σ: the
+    smooth version of an on/off switch.
+  concept: nonlinearity
+
+- term: MSE
+  forms: [MSE, mean squared error]
+  explain: >
+    Mean squared error: the average squared gap between a model's outputs
+    and the correct values. Squaring removes the sign and makes a big
+    miss count for much more than a small one.
+  concept: loss
+
+- term: loss
+  forms: [loss]
+  explain: >
+    The number training tries to make small, measuring how wrong the
+    model is on its data.
+  concept: loss
+
+- term: optimizer
+  forms: [optimizer, optimizers]
+  explain: >
+    The rule that turns a gradient into a step for each weight: plain
+    gradient descent, or a variant such as Adam or RMSProp that scales the
+    step by the gradient's recent history.
+  concept: gradient-descent
+
+- term: learning rate
+  forms: [learning rate, learning rates]
+  explain: >
+    The size of the step an optimizer takes along the gradient. Too large
+    overshoots; too small crawls.
+  concept: gradient-descent
+
+- term: extrapolation
+  forms: [extrapolation, extrapolate, extrapolates, extrapolating]
+  explain: Testing on inputs outside the range the model trained on.
+
+- term: interpolation
+  forms: [interpolation, interpolate]
+  explain: Testing on inputs from the same range the model trained on.
+
+- term: floating point
+  forms: [floating-point, floating point]
+  explain: >
+    The number format computers use for real numbers: a fixed count of
+    significant digits, so every operation rounds a little and no result
+    is more exact than that rounding allows.
+
+- term: snapping
+  forms: [snapping, snapped, snaps, snap]
+  explain: >
+    Rounding a value that sits within a threshold of a known exact target
+    onto that target.
+
+- term: unit circle
+  forms: [unit circle]
+  explain: >
+    The circle of radius 1 around the origin. Every point on it is
+    (cos θ, sin θ) for some angle θ, so an angle and a point on the circle
+    are the same information.
+  concept: phasor
+
+- term: training distribution
+  forms: [distribution, distributions, training distribution]
+  explain: >
+    The range and shape of the inputs a model sees while it trains, often
+    written like U(a, b) for uniform between a and b.
+
+- term: matrix multiplication
+  forms: [matrix multiplication]
+  explain: >
+    Multiplying each input by a weight and adding the results, once per
+    output: the operation every linear layer performs.
+  concept: linear-map
+
+- term: fixed point
+  forms: [fixed point, fixed points]
+  explain: >
+    A value a process leaves where it is: put it in and it comes back out
+    unchanged.
+
+- term: log-space
+  forms: [log-space, log space]
+  explain: >
+    Working with the logarithms of numbers instead of the numbers
+    themselves, so multiplication and division become addition and
+    subtraction.

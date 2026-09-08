@@ -1,0 +1,165 @@
+{
+  "trask2018": {
+    "authors": [
+      "Andrew Trask",
+      "Felix Hill",
+      "Scott E. Reed",
+      "Jack Rae",
+      "Chris Dyer",
+      "Phil Blunsom"
+    ],
+    "title": "Neural Arithmetic Logic Units",
+    "venue": "Advances in Neural Information Processing Systems 31",
+    "year": 2018,
+    "url": "https://arxiv.org/abs/1808.00508"
+  },
+  "madsen2020": {
+    "authors": [
+      "Andreas Madsen",
+      "Alexander Rosenberg Johansen"
+    ],
+    "title": "Neural Arithmetic Units",
+    "venue": "International Conference on Learning Representations",
+    "year": 2020,
+    "url": "https://arxiv.org/abs/2001.05016"
+  },
+  "schlor2020": {
+    "authors": [
+      "Daniel Schlör",
+      "Markus Ring",
+      "Andreas Hotho"
+    ],
+    "title": "iNALU: Improved Neural Arithmetic Logic Unit",
+    "venue": "Frontiers in Artificial Intelligence 3:71",
+    "year": 2020,
+    "url": "https://arxiv.org/abs/2003.07629"
+  },
+  "heim2020": {
+    "authors": [
+      "Niklas Heim",
+      "Tomáš Pevný",
+      "Václav Šmídl"
+    ],
+    "title": "Neural Power Units",
+    "venue": "Advances in Neural Information Processing Systems 33",
+    "year": 2020,
+    "url": "https://arxiv.org/abs/2006.01681"
+  },
+  "mistry2022": {
+    "authors": [
+      "Bhumika Mistry",
+      "Katayoun Farrahi",
+      "Jonathon Hare"
+    ],
+    "title": "A Primer for Neural Arithmetic Logic Modules",
+    "venue": "Journal of Machine Learning Research 23(185)",
+    "year": 2022,
+    "url": "https://arxiv.org/abs/2101.09530"
+  },
+  "martius2017": {
+    "authors": [
+      "Georg Martius",
+      "Christoph H. Lampert"
+    ],
+    "title": "Extrapolation and Learning Equations",
+    "venue": "ICLR Workshop Track",
+    "year": 2017,
+    "url": "https://arxiv.org/abs/1610.02995"
+  },
+  "kingma2015": {
+    "authors": [
+      "Diederik P. Kingma",
+      "Jimmy Ba"
+    ],
+    "title": "Adam: A Method for Stochastic Optimization",
+    "venue": "International Conference on Learning Representations",
+    "year": 2015,
+    "url": "https://arxiv.org/abs/1412.6980"
+  },
+  "sutskever2013": {
+    "authors": [
+      "Ilya Sutskever",
+      "James Martens",
+      "George E. Dahl",
+      "Geoffrey E. Hinton"
+    ],
+    "title": "On the Importance of Initialization and Momentum in Deep Learning",
+    "venue": "Proceedings of the 30th International Conference on Machine Learning, PMLR 28",
+    "year": 2013,
+    "url": "https://proceedings.mlr.press/v28/sutskever13.html"
+  },
+  "loshchilov2019": {
+    "authors": [
+      "Ilya Loshchilov",
+      "Frank Hutter"
+    ],
+    "title": "Decoupled Weight Decay Regularization",
+    "venue": "International Conference on Learning Representations",
+    "year": 2019,
+    "url": "https://arxiv.org/abs/1711.05101"
+  },
+  "liu2020": {
+    "authors": [
+      "Liyuan Liu",
+      "Haoming Jiang",
+      "Pengcheng He",
+      "Weizhu Chen",
+      "Xiaodong Liu",
+      "Jianfeng Gao",
+      "Jiawei Han"
+    ],
+    "title": "On the Variance of the Adaptive Learning Rate and Beyond",
+    "venue": "International Conference on Learning Representations",
+    "year": 2020,
+    "url": "https://arxiv.org/abs/1908.03265"
+  },
+  "dozat2016": {
+    "authors": [
+      "Timothy Dozat"
+    ],
+    "title": "Incorporating Nesterov Momentum into Adam",
+    "venue": "ICLR Workshop Track",
+    "year": 2016,
+    "url": "https://openreview.net/forum?id=OM0jvwB8jIp57ZJjtNEZ"
+  },
+  "duchi2011": {
+    "authors": [
+      "John Duchi",
+      "Elad Hazan",
+      "Yoram Singer"
+    ],
+    "title": "Adaptive Subgradient Methods for Online Learning and Stochastic Optimization",
+    "venue": "Journal of Machine Learning Research 12",
+    "year": 2011,
+    "url": "https://jmlr.org/papers/v12/duchi11a.html"
+  },
+  "zeiler2012": {
+    "authors": [
+      "Matthew D. Zeiler"
+    ],
+    "title": "ADADELTA: An Adaptive Learning Rate Method",
+    "venue": "arXiv preprint",
+    "year": 2012,
+    "url": "https://arxiv.org/abs/1212.5701"
+  },
+  "tieleman2012": {
+    "authors": [
+      "Tijmen Tieleman",
+      "Geoffrey Hinton"
+    ],
+    "title": "Lecture 6.5 — RMSProp: Divide the Gradient by a Running Average of Its Recent Magnitude",
+    "venue": "COURSERA: Neural Networks for Machine Learning",
+    "year": 2012,
+    "url": "https://www.cs.toronto.edu/~tijmen/csc321/slides/lecture_slides_lec6.pdf"
+  },
+  "riedmiller1993": {
+    "authors": [
+      "Martin Riedmiller",
+      "Heinrich Braun"
+    ],
+    "title": "A Direct Adaptive Method for Faster Backpropagation Learning: The RPROP Algorithm",
+    "venue": "IEEE International Conference on Neural Networks",
+    "year": 1993,
+    "url": "https://ieeexplore.ieee.org/document/298623"
+  }
+}

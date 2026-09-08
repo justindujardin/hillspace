@@ -1,7 +1,7 @@
 [project]
 name = "hillspace"
 version = "0.1.0"
-description = "Hill Space is All You Need - Paper reference code"
+description = "Stable Because Stuck: NALU Selects, It Doesn't Compute"
 readme = "README.md"
 license = "LICENSE.md"
 requires-python = ">=3.10"
@@ -23,5 +23,4 @@ dev = [
     "flake8>=7.3.0",
     "isort>=6.0.1",
     "mypy>=1.16.1",
-    "pylance>=0.31.0",
 ]

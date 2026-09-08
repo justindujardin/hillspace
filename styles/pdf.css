@@ -1,0 +1,90 @@
+/* Hill Space — print theme over the penname base. Same token names as
+   web.css with values chosen for paper: ink-safe amber, teal, violet. The
+   figure renderers never know which theme they are in. */
+
+:root {
+  --tanh: #b06f10;
+  --sigmoid: #0b7285;
+  --weight: #6d4fa1;
+  --accent: var(--tanh);
+  --link: var(--sigmoid);
+  --accent-2: var(--weight);
+}
+
+.credit { font-size: 7.5pt; font-style: normal; }
+
+.leg-swatch.bar-tanh { background: var(--tanh); }
+.leg-swatch.bar-sigmoid { background: var(--sigmoid); }
+.leg-swatch.bar-weight { background: var(--weight); }
+.leg-swatch.bar-ghost { background: var(--text-ghost); }
+.leg-swatch.bar-bad { background: var(--bad); }
+.leg-swatch.bar-good { background: var(--good); }
+
+/* section headers: chapter-break treatment in print too */
+article h1 { font-size: 14pt; margin: 26pt 0 7pt; padding-top: 10pt; border-top: 0.6pt solid var(--border); page-break-after: avoid; }
+
+/* ── the chip/flow layout language (primitive figures) ── */
+.flow { margin: 6pt 0; font-family: var(--mono); font-size: 8.5pt; }
+.flow-op { color: var(--text-faint); padding: 0 2pt; }
+.flow-sub { color: var(--text-ghost); font-size: 8.5pt; }
+.flow-cols { display: flex; gap: 12pt; align-items: flex-start; }
+.flow-cols > div { flex: 1; }
+.circle-chart { width: 140pt; height: 140pt; }
+.chip { display: inline-block; padding: 1pt 5pt; border-radius: 3pt; font: 500 8.5pt var(--mono); border: 0.6pt solid var(--border); background: #ffffff; color: var(--text); margin: 1pt 1pt; vertical-align: middle; }
+.chip-label { font-size: 7pt; color: var(--text-faint); margin-right: 3pt; }
+.chip-in { border-color: var(--sigmoid); color: var(--sigmoid); }
+.chip-w { border-color: var(--tanh); color: var(--tanh); }
+.chip-out { border-color: var(--weight); color: var(--weight); }
+.chip-ok { border-color: var(--good); color: var(--good); }
+.chip-err { border-color: var(--bad); color: var(--bad); }
+.chip-dim { color: var(--text-dim); }
+
+/* the hero equation row: large labeled chips, few of them */
+.flow-hero { margin: 8pt 0; }
+.flow-hero .flow-op { font-size: 12pt; padding: 0 3pt; }
+.chip-col { text-align: center; padding: 4pt 9pt; border-radius: 5pt; }
+.chip-col .chip-label { display: block; font-size: 6.5pt; margin: 0 0 1pt; }
+.chip-col .chip-value { display: block; font: 600 10.5pt var(--mono); }
+
+/* verdict cards: model vs calculator vs error */
+.verdict { margin: 8pt 0 2pt; }
+.vcard { display: inline-block; border: 0.6pt solid var(--border); background: #ffffff; border-radius: 5pt; padding: 4pt 10pt; margin-right: 6pt; vertical-align: middle; }
+.v-label { font: 500 6.5pt var(--mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-faint); }
+.v-value { font: 600 10.5pt var(--mono); margin-top: 1pt; color: var(--text); }
+.vcard.v-model { border-color: var(--weight); }
+.vcard.v-model .v-value { color: var(--weight); }
+.vcard.v-truth .v-value { color: var(--text-dim); }
+.vcard.v-ok { border-color: var(--good); }
+.vcard.v-ok .v-value { color: var(--good); }
+.vcard.v-bad { border-color: var(--bad); }
+.vcard.v-bad .v-value { color: var(--bad); }
+.v-route { font: 400 8.5pt var(--mono); color: var(--text-ghost); margin-top: 3pt; }
+
+/* step-by-step walkthroughs print in full */
+.steps { margin: 7pt 0 0; border-top: 0.6pt dashed var(--border); padding-top: 5pt; }
+.steps-label { font: 500 8.5pt var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); }
+.steps ol { margin: 5pt 0 0; padding-left: 2pt; font-size: 8.5pt; color: var(--text-dim); list-style: none; counter-reset: step; }
+.steps li { margin: 4pt 0; line-height: 1.9; counter-increment: step; position: relative; padding-left: 18pt; }
+.steps li::before { content: counter(step); position: absolute; left: 0; top: 1.5pt; width: 11pt; height: 11pt; border-radius: 50%; background: var(--sigmoid); color: #ffffff; font: 600 7pt var(--mono); text-align: center; line-height: 11pt; }
+
+/* trig product grid */
+.tp-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6pt; margin: 7pt 0; }
+.tp-cell { border: 0.6pt solid var(--border); border-radius: 4pt; padding: 4pt 7pt; background: #ffffff; }
+.tp-cell.tp-selected { border: 1.4pt solid var(--weight); }
+.tp-name { font: 500 7.5pt var(--mono); color: var(--text-dim); }
+.tp-val { font: 500 9.5pt var(--mono); color: var(--text); }
+.tp-selected .tp-val { color: var(--weight); }
+.tp-coeff { font: 400 7pt var(--mono); color: var(--text-ghost); }
+
+/* optimizer matrix — panels stack; side-by-side overflows the page */
+.om-row { display: block; }
+.om-panel { margin-bottom: 8pt; }
+.om-label { font: 500 8.5pt var(--mono); color: var(--text-dim); margin-bottom: 4pt; }
+.om-table { border-collapse: collapse; font: 500 8pt var(--mono); width: 100%; }
+.om-table th { color: var(--text-faint); font-weight: 500; padding: 2.5pt 4.5pt; text-align: right; border: none; background: none; font-family: var(--mono); }
+.om-table tr:first-child th { text-align: center; vertical-align: bottom; font-size: 7pt; overflow-wrap: break-word; }
+.om-table td { text-align: center; padding: 4.5pt 5.5pt; border: 0.5pt solid #ffffff; }
+
+/* hill-surface */
+.hs-map { max-width: 100%; }
+.hs-readout { margin-top: 5pt; }

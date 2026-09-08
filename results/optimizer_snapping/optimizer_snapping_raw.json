@@ -1,0 +1,1450 @@
+{
+  "epochs": 100,
+  "snap_conditions": [
+    null,
+    1e-06,
+    0.01
+  ],
+  "results": [
+    {
+      "op": "add",
+      "optimizer": "Adam(def)",
+      "threshold": null,
+      "mse": 5.615872614477203e-07
+    },
+    {
+      "op": "subtract",
+      "optimizer": "Adam(def)",
+      "threshold": null,
+      "mse": 3.676312921111347e-06
+    },
+    {
+      "op": "multiply",
+      "optimizer": "Adam(def)",
+      "threshold": null,
+      "mse": 21.79186310771295
+    },
+    {
+      "op": "divide",
+      "optimizer": "Adam(def)",
+      "threshold": null,
+      "mse": 4.52114483274716e-12
+    },
+    {
+      "op": "identity",
+      "optimizer": "Adam(def)",
+      "threshold": null,
+      "mse": 9.661011427647863e-06
+    },
+    {
+      "op": "reciprocal",
+      "optimizer": "Adam(def)",
+      "threshold": null,
+      "mse": 1.5996994282783262e-22
+    },
+    {
+      "op": "sin",
+      "optimizer": "Adam(def)",
+      "threshold": null,
+      "mse": 4.3091608085338684e-13
+    },
+    {
+      "op": "cos_add",
+      "optimizer": "Adam(def)",
+      "threshold": null,
+      "mse": 4.558237270984849e-13
+    },
+    {
+      "op": "add",
+      "optimizer": "Adam(\u03b2\u2082=0.5)",
+      "threshold": null,
+      "mse": 2.0116414947040223e-25
+    },
+    {
+      "op": "subtract",
+      "optimizer": "Adam(\u03b2\u2082=0.5)",
+      "threshold": null,
+      "mse": 2.941252805300782e-25
+    },
+    {
+      "op": "multiply",
+      "optimizer": "Adam(\u03b2\u2082=0.5)",
+      "threshold": null,
+      "mse": 5.847882223257971e-16
+    },
+    {
+      "op": "divide",
+      "optimizer": "Adam(\u03b2\u2082=0.5)",
+      "threshold": null,
+      "mse": 1.9769096660234161e-28
+    },
+    {
+      "op": "identity",
+      "optimizer": "Adam(\u03b2\u2082=0.5)",
+      "threshold": null,
+      "mse": 8.718848719898233e-24
+    },
+    {
+      "op": "reciprocal",
+      "optimizer": "Adam(\u03b2\u2082=0.5)",
+      "threshold": null,
+      "mse": 1.2203761945046209e-36
+    },
+    {
+      "op": "sin",
+      "optimizer": "Adam(\u03b2\u2082=0.5)",
+      "threshold": null,
+      "mse": 8.377795258084475e-36
+    },
+    {
+      "op": "cos_add",
+      "optimizer": "Adam(\u03b2\u2082=0.5)",
+      "threshold": null,
+      "mse": 3.509858511054632e-26
+    },
+    {
+      "op": "add",
+      "optimizer": "AdamW",
+      "threshold": null,
+      "mse": 0.0010590582264813641
+    },
+    {
+      "op": "subtract",
+      "optimizer": "AdamW",
+      "threshold": null,
+      "mse": 0.0066944915128252565
+    },
+    {
+      "op": "multiply",
+      "optimizer": "AdamW",
+      "threshold": null,
+      "mse": 45384.24060342882
+    },
+    {
+      "op": "divide",
+      "optimizer": "AdamW",
+      "threshold": null,
+      "mse": 1.4611847719446207e-08
+    },
+    {
+      "op": "identity",
+      "optimizer": "AdamW",
+      "threshold": null,
+      "mse": 0.018868473151476644
+    },
+    {
+      "op": "reciprocal",
+      "optimizer": "AdamW",
+      "threshold": null,
+      "mse": 1.3181458453459118e-07
+    },
+    {
+      "op": "sin",
+      "optimizer": "AdamW",
+      "threshold": null,
+      "mse": 7.579935887702253e-10
+    },
+    {
+      "op": "cos_add",
+      "optimizer": "AdamW",
+      "threshold": null,
+      "mse": 7.895108002292652e-10
+    },
+    {
+      "op": "add",
+      "optimizer": "RAdam",
+      "threshold": null,
+      "mse": 4.474281673476726e-07
+    },
+    {
+      "op": "subtract",
+      "optimizer": "RAdam",
+      "threshold": null,
+      "mse": 3.810647189744761e-06
+    },
+    {
+      "op": "multiply",
+      "optimizer": "RAdam",
+      "threshold": null,
+      "mse": 20.118495005838774
+    },
+    {
+      "op": "divide",
+      "optimizer": "RAdam",
+      "threshold": null,
+      "mse": 5.190647278032154e-12
+    },
+    {
+      "op": "identity",
+      "optimizer": "RAdam",
+      "threshold": null,
+      "mse": 9.66940235229203e-06
+    },
+    {
+      "op": "reciprocal",
+      "optimizer": "RAdam",
+      "threshold": null,
+      "mse": 9.403166739507025e-23
+    },
+    {
+      "op": "sin",
+      "optimizer": "RAdam",
+      "threshold": null,
+      "mse": 4.015102060923714e-13
+    },
+    {
+      "op": "cos_add",
+      "optimizer": "RAdam",
+      "threshold": null,
+      "mse": 4.638635564859846e-13
+    },
+    {
+      "op": "add",
+      "optimizer": "NAdam",
+      "threshold": null,
+      "mse": 5.574013210401875e-07
+    },
+    {
+      "op": "subtract",
+      "optimizer": "NAdam",
+      "threshold": null,
+      "mse": 3.6517173744473298e-06
+    },
+    {
+      "op": "multiply",
+      "optimizer": "NAdam",
+      "threshold": null,
+      "mse": 21.635668917485322
+    },
+    {
+      "op": "divide",
+      "optimizer": "NAdam",
+      "threshold": null,
+      "mse": 4.53407339370101e-12
+    },
+    {
+      "op": "identity",
+      "optimizer": "NAdam",
+      "threshold": null,
+      "mse": 9.574610964223276e-06
+    },
+    {
+      "op": "reciprocal",
+      "optimizer": "NAdam",
+      "threshold": null,
+      "mse": 1.6208187996823223e-22
+    },
+    {
+      "op": "sin",
+      "optimizer": "NAdam",
+      "threshold": null,
+      "mse": 4.168852228710899e-13
+    },
+    {
+      "op": "cos_add",
+      "optimizer": "NAdam",
+      "threshold": null,
+      "mse": 4.451612165274433e-13
+    },
+    {
+      "op": "add",
+      "optimizer": "RMSProp",
+      "threshold": null,
+      "mse": 3.613329920413113e-07
+    },
+    {
+      "op": "subtract",
+      "optimizer": "RMSProp",
+      "threshold": null,
+      "mse": 2.496348062314075e-06
+    },
+    {
+      "op": "multiply",
+      "optimizer": "RMSProp",
+      "threshold": null,
+      "mse": 12.578681749450508
+    },
+    {
+      "op": "divide",
+      "optimizer": "RMSProp",
+      "threshold": null,
+      "mse": 3.032360033810453e-12
+    },
+    {
+      "op": "identity",
+      "optimizer": "RMSProp",
+      "threshold": null,
+      "mse": 6.234296777129908e-06
+    },
+    {
+      "op": "reciprocal",
+      "optimizer": "RMSProp",
+      "threshold": null,
+      "mse": 7.032084463259243e-23
+    },
+    {
+      "op": "sin",
+      "optimizer": "RMSProp",
+      "threshold": null,
+      "mse": 3.370313903439884e-13
+    },
+    {
+      "op": "cos_add",
+      "optimizer": "RMSProp",
+      "threshold": null,
+      "mse": 3.2781319190982027e-13
+    },
+    {
+      "op": "add",
+      "optimizer": "Adagrad",
+      "threshold": null,
+      "mse": 558.7986106733039
+    },
+    {
+      "op": "subtract",
+      "optimizer": "Adagrad",
+      "threshold": null,
+      "mse": 566.1107610325382
+    },
+    {
+      "op": "multiply",
+      "optimizer": "Adagrad",
+      "threshold": null,
+      "mse": 201185660631.67413
+    },
+    {
+      "op": "divide",
+      "optimizer": "Adagrad",
+      "threshold": null,
+      "mse": 0.05212956627510024
+    },
+    {
+      "op": "identity",
+      "optimizer": "Adagrad",
+      "threshold": null,
+      "mse": 3969.5435726356536
+    },
+    {
+      "op": "reciprocal",
+      "optimizer": "Adagrad",
+      "threshold": null,
+      "mse": 1.2063268650893781e-08
+    },
+    {
+      "op": "sin",
+      "optimizer": "Adagrad",
+      "threshold": null,
+      "mse": 9.708073008446571e-07
+    },
+    {
+      "op": "cos_add",
+      "optimizer": "Adagrad",
+      "threshold": null,
+      "mse": 7.4870250155294645e-06
+    },
+    {
+      "op": "add",
+      "optimizer": "Adadelta",
+      "threshold": null,
+      "mse": 3.5872464135106026
+    },
+    {
+      "op": "subtract",
+      "optimizer": "Adadelta",
+      "threshold": null,
+      "mse": 24.80159467910807
+    },
+    {
+      "op": "multiply",
+      "optimizer": "Adadelta",
+      "threshold": null,
+      "mse": 123218577.08566605
+    },
+    {
+      "op": "divide",
+      "optimizer": "Adadelta",
+      "threshold": null,
+      "mse": 1.903901218127961e-05
+    },
+    {
+      "op": "identity",
+      "optimizer": "Adadelta",
+      "threshold": null,
+      "mse": 60.49753795214676
+    },
+    {
+      "op": "reciprocal",
+      "optimizer": "Adadelta",
+      "threshold": null,
+      "mse": 2.1745770575346195e-12
+    },
+    {
+      "op": "sin",
+      "optimizer": "Adadelta",
+      "threshold": null,
+      "mse": 6.190403237555221e-06
+    },
+    {
+      "op": "cos_add",
+      "optimizer": "Adadelta",
+      "threshold": null,
+      "mse": 3.1014036198489796e-06
+    },
+    {
+      "op": "add",
+      "optimizer": "Rprop",
+      "threshold": null,
+      "mse": 2.0116414947040223e-25
+    },
+    {
+      "op": "subtract",
+      "optimizer": "Rprop",
+      "threshold": null,
+      "mse": 2.941252805300782e-25
+    },
+    {
+      "op": "multiply",
+      "optimizer": "Rprop",
+      "threshold": null,
+      "mse": 5.847882223257971e-16
+    },
+    {
+      "op": "divide",
+      "optimizer": "Rprop",
+      "threshold": null,
+      "mse": 1.9769096660234161e-28
+    },
+    {
+      "op": "identity",
+      "optimizer": "Rprop",
+      "threshold": null,
+      "mse": 8.718848719898233e-24
+    },
+    {
+      "op": "reciprocal",
+      "optimizer": "Rprop",
+      "threshold": null,
+      "mse": 1.2203761945046209e-36
+    },
+    {
+      "op": "sin",
+      "optimizer": "Rprop",
+      "threshold": null,
+      "mse": 2.756853396809108e-17
+    },
+    {
+      "op": "cos_add",
+      "optimizer": "Rprop",
+      "threshold": null,
+      "mse": 3.5098539936644065e-26
+    },
+    {
+      "op": "add",
+      "optimizer": "SGD+mom",
+      "threshold": null,
+      "mse": 2.0116414947040223e-25
+    },
+    {
+      "op": "subtract",
+      "optimizer": "SGD+mom",
+      "threshold": null,
+      "mse": 0.045726382133962074
+    },
+    {
+      "op": "multiply",
+      "optimizer": "SGD+mom",
+      "threshold": null,
+      "mse": 5.847882223257971e-16
+    },
+    {
+      "op": "divide",
+      "optimizer": "SGD+mom",
+      "threshold": null,
+      "mse": 1.9769096660234161e-28
+    },
+    {
+      "op": "identity",
+      "optimizer": "SGD+mom",
+      "threshold": null,
+      "mse": 8.948463864673576e-15
+    },
+    {
+      "op": "reciprocal",
+      "optimizer": "SGD+mom",
+      "threshold": null,
+      "mse": 1.2203761945046209e-36
+    },
+    {
+      "op": "sin",
+      "optimizer": "SGD+mom",
+      "threshold": null,
+      "mse": 1.1266179912327787e-06
+    },
+    {
+      "op": "cos_add",
+      "optimizer": "SGD+mom",
+      "threshold": null,
+      "mse": 8.398975261279093e-07
+    },
+    {
+      "op": "add",
+      "optimizer": "Adam(def)",
+      "threshold": 1e-06,
+      "mse": 2.0116414947040223e-25
+    },
+    {
+      "op": "subtract",
+      "optimizer": "Adam(def)",
+      "threshold": 1e-06,
+      "mse": 2.941252805300782e-25
+    },
+    {
+      "op": "multiply",
+      "optimizer": "Adam(def)",
+      "threshold": 1e-06,
+      "mse": 5.847882223257971e-16
+    },
+    {
+      "op": "divide",
+      "optimizer": "Adam(def)",
+      "threshold": 1e-06,
+      "mse": 1.9769096660234161e-28
+    },
+    {
+      "op": "identity",
+      "optimizer": "Adam(def)",
+      "threshold": 1e-06,
+      "mse": 8.718848719898233e-24
+    },
+    {
+      "op": "reciprocal",
+      "optimizer": "Adam(def)",
+      "threshold": 1e-06,
+      "mse": 1.2203761945046209e-36
+    },
+    {
+      "op": "sin",
+      "optimizer": "Adam(def)",
+      "threshold": 1e-06,
+      "mse": 2.7480993950758823e-13
+    },
+    {
+      "op": "cos_add",
+      "optimizer": "Adam(def)",
+      "threshold": 1e-06,
+      "mse": 4.435630943473096e-14
+    },
+    {
+      "op": "add",
+      "optimizer": "Adam(\u03b2\u2082=0.5)",
+      "threshold": 1e-06,
+      "mse": 2.0116414947040223e-25
+    },
+    {
+      "op": "subtract",
+      "optimizer": "Adam(\u03b2\u2082=0.5)",
+      "threshold": 1e-06,
+      "mse": 2.941252805300782e-25
+    },
+    {
+      "op": "multiply",
+      "optimizer": "Adam(\u03b2\u2082=0.5)",
+      "threshold": 1e-06,
+      "mse": 5.847882223257971e-16
+    },
+    {
+      "op": "divide",
+      "optimizer": "Adam(\u03b2\u2082=0.5)",
+      "threshold": 1e-06,
+      "mse": 1.9769096660234161e-28
+    },
+    {
+      "op": "identity",
+      "optimizer": "Adam(\u03b2\u2082=0.5)",
+      "threshold": 1e-06,
+      "mse": 8.718848719898233e-24
+    },
+    {
+      "op": "reciprocal",
+      "optimizer": "Adam(\u03b2\u2082=0.5)",
+      "threshold": 1e-06,
+      "mse": 1.2203761945046209e-36
+    },
+    {
+      "op": "sin",
+      "optimizer": "Adam(\u03b2\u2082=0.5)",
+      "threshold": 1e-06,
+      "mse": 8.377795258084475e-36
+    },
+    {
+      "op": "cos_add",
+      "optimizer": "Adam(\u03b2\u2082=0.5)",
+      "threshold": 1e-06,
+      "mse": 3.509858511054632e-26
+    },
+    {
+      "op": "add",
+      "optimizer": "AdamW",
+      "threshold": 1e-06,
+      "mse": 0.0006540014130418114
+    },
+    {
+      "op": "subtract",
+      "optimizer": "AdamW",
+      "threshold": 1e-06,
+      "mse": 0.0066944915128252565
+    },
+    {
+      "op": "multiply",
+      "optimizer": "AdamW",
+      "threshold": 1e-06,
+      "mse": 5.847882223257971e-16
+    },
+    {
+      "op": "divide",
+      "optimizer": "AdamW",
+      "threshold": 1e-06,
+      "mse": 1.9769096660234161e-28
+    },
+    {
+      "op": "identity",
+      "optimizer": "AdamW",
+      "threshold": 1e-06,
+      "mse": 0.011684189473213844
+    },
+    {
+      "op": "reciprocal",
+      "optimizer": "AdamW",
+      "threshold": 1e-06,
+      "mse": 1.3181458453459118e-07
+    },
+    {
+      "op": "sin",
+      "optimizer": "AdamW",
+      "threshold": 1e-06,
+      "mse": 7.579935887702253e-10
+    },
+    {
+      "op": "cos_add",
+      "optimizer": "AdamW",
+      "threshold": 1e-06,
+      "mse": 7.895108002292652e-10
+    },
+    {
+      "op": "add",
+      "optimizer": "RAdam",
+      "threshold": 1e-06,
+      "mse": 2.0116414947040223e-25
+    },
+    {
+      "op": "subtract",
+      "optimizer": "RAdam",
+      "threshold": 1e-06,
+      "mse": 2.941252805300782e-25
+    },
+    {
+      "op": "multiply",
+      "optimizer": "RAdam",
+      "threshold": 1e-06,
+      "mse": 5.847882223257971e-16
+    },
+    {
+      "op": "divide",
+      "optimizer": "RAdam",
+      "threshold": 1e-06,
+      "mse": 1.9769096660234161e-28
+    },
+    {
+      "op": "identity",
+      "optimizer": "RAdam",
+      "threshold": 1e-06,
+      "mse": 8.718848719898233e-24
+    },
+    {
+      "op": "reciprocal",
+      "optimizer": "RAdam",
+      "threshold": 1e-06,
+      "mse": 1.2203761945046209e-36
+    },
+    {
+      "op": "sin",
+      "optimizer": "RAdam",
+      "threshold": 1e-06,
+      "mse": 2.376443194470727e-13
+    },
+    {
+      "op": "cos_add",
+      "optimizer": "RAdam",
+      "threshold": 1e-06,
+      "mse": 2.520580338536545e-13
+    },
+    {
+      "op": "add",
+      "optimizer": "NAdam",
+      "threshold": 1e-06,
+      "mse": 2.0116414947040223e-25
+    },
+    {
+      "op": "subtract",
+      "optimizer": "NAdam",
+      "threshold": 1e-06,
+      "mse": 2.941252805300782e-25
+    },
+    {
+      "op": "multiply",
+      "optimizer": "NAdam",
+      "threshold": 1e-06,
+      "mse": 5.847882223257971e-16
+    },
+    {
+      "op": "divide",
+      "optimizer": "NAdam",
+      "threshold": 1e-06,
+      "mse": 1.9769096660234161e-28
+    },
+    {
+      "op": "identity",
+      "optimizer": "NAdam",
+      "threshold": 1e-06,
+      "mse": 8.718848719898233e-24
+    },
+    {
+      "op": "reciprocal",
+      "optimizer": "NAdam",
+      "threshold": 1e-06,
+      "mse": 1.2203761945046209e-36
+    },
+    {
+      "op": "sin",
+      "optimizer": "NAdam",
+      "threshold": 1e-06,
+      "mse": 2.1806131418368336e-13
+    },
+    {
+      "op": "cos_add",
+      "optimizer": "NAdam",
+      "threshold": 1e-06,
+      "mse": 2.6729967536852567e-13
+    },
+    {
+      "op": "add",
+      "optimizer": "RMSProp",
+      "threshold": 1e-06,
+      "mse": 2.0116414947040223e-25
+    },
+    {
+      "op": "subtract",
+      "optimizer": "RMSProp",
+      "threshold": 1e-06,
+      "mse": 2.941252805300782e-25
+    },
+    {
+      "op": "multiply",
+      "optimizer": "RMSProp",
+      "threshold": 1e-06,
+      "mse": 5.847882223257971e-16
+    },
+    {
+      "op": "divide",
+      "optimizer": "RMSProp",
+      "threshold": 1e-06,
+      "mse": 1.9769096660234161e-28
+    },
+    {
+      "op": "identity",
+      "optimizer": "RMSProp",
+      "threshold": 1e-06,
+      "mse": 8.718848719898233e-24
+    },
+    {
+      "op": "reciprocal",
+      "optimizer": "RMSProp",
+      "threshold": 1e-06,
+      "mse": 1.2203761945046209e-36
+    },
+    {
+      "op": "sin",
+      "optimizer": "RMSProp",
+      "threshold": 1e-06,
+      "mse": 2.1167656455492624e-13
+    },
+    {
+      "op": "cos_add",
+      "optimizer": "RMSProp",
+      "threshold": 1e-06,
+      "mse": 1.9275556078726377e-13
+    },
+    {
+      "op": "add",
+      "optimizer": "Adagrad",
+      "threshold": 1e-06,
+      "mse": 558.7986106733039
+    },
+    {
+      "op": "subtract",
+      "optimizer": "Adagrad",
+      "threshold": 1e-06,
+      "mse": 566.1107610325382
+    },
+    {
+      "op": "multiply",
+      "optimizer": "Adagrad",
+      "threshold": 1e-06,
+      "mse": 201185660631.67413
+    },
+    {
+      "op": "divide",
+      "optimizer": "Adagrad",
+      "threshold": 1e-06,
+      "mse": 0.05212956627510024
+    },
+    {
+      "op": "identity",
+      "optimizer": "Adagrad",
+      "threshold": 1e-06,
+      "mse": 3969.5435726356536
+    },
+    {
+      "op": "reciprocal",
+      "optimizer": "Adagrad",
+      "threshold": 1e-06,
+      "mse": 1.2063268650893781e-08
+    },
+    {
+      "op": "sin",
+      "optimizer": "Adagrad",
+      "threshold": 1e-06,
+      "mse": 9.708073008446571e-07
+    },
+    {
+      "op": "cos_add",
+      "optimizer": "Adagrad",
+      "threshold": 1e-06,
+      "mse": 7.4870250155294645e-06
+    },
+    {
+      "op": "add",
+      "optimizer": "Adadelta",
+      "threshold": 1e-06,
+      "mse": 3.5872464135106026
+    },
+    {
+      "op": "subtract",
+      "optimizer": "Adadelta",
+      "threshold": 1e-06,
+      "mse": 24.80159467910807
+    },
+    {
+      "op": "multiply",
+      "optimizer": "Adadelta",
+      "threshold": 1e-06,
+      "mse": 123218577.08566605
+    },
+    {
+      "op": "divide",
+      "optimizer": "Adadelta",
+      "threshold": 1e-06,
+      "mse": 1.903901218127961e-05
+    },
+    {
+      "op": "identity",
+      "optimizer": "Adadelta",
+      "threshold": 1e-06,
+      "mse": 60.49753795214676
+    },
+    {
+      "op": "reciprocal",
+      "optimizer": "Adadelta",
+      "threshold": 1e-06,
+      "mse": 2.1745770575346195e-12
+    },
+    {
+      "op": "sin",
+      "optimizer": "Adadelta",
+      "threshold": 1e-06,
+      "mse": 6.190403237555221e-06
+    },
+    {
+      "op": "cos_add",
+      "optimizer": "Adadelta",
+      "threshold": 1e-06,
+      "mse": 3.1014036198489796e-06
+    },
+    {
+      "op": "add",
+      "optimizer": "Rprop",
+      "threshold": 1e-06,
+      "mse": 2.0116414947040223e-25
+    },
+    {
+      "op": "subtract",
+      "optimizer": "Rprop",
+      "threshold": 1e-06,
+      "mse": 2.941252805300782e-25
+    },
+    {
+      "op": "multiply",
+      "optimizer": "Rprop",
+      "threshold": 1e-06,
+      "mse": 5.847882223257971e-16
+    },
+    {
+      "op": "divide",
+      "optimizer": "Rprop",
+      "threshold": 1e-06,
+      "mse": 1.9769096660234161e-28
+    },
+    {
+      "op": "identity",
+      "optimizer": "Rprop",
+      "threshold": 1e-06,
+      "mse": 8.718848719898233e-24
+    },
+    {
+      "op": "reciprocal",
+      "optimizer": "Rprop",
+      "threshold": 1e-06,
+      "mse": 1.2203761945046209e-36
+    },
+    {
+      "op": "sin",
+      "optimizer": "Rprop",
+      "threshold": 1e-06,
+      "mse": 8.080979450490757e-19
+    },
+    {
+      "op": "cos_add",
+      "optimizer": "Rprop",
+      "threshold": 1e-06,
+      "mse": 3.509858511054632e-26
+    },
+    {
+      "op": "add",
+      "optimizer": "SGD+mom",
+      "threshold": 1e-06,
+      "mse": 2.0116414947040223e-25
+    },
+    {
+      "op": "subtract",
+      "optimizer": "SGD+mom",
+      "threshold": 1e-06,
+      "mse": 0.045726382133962074
+    },
+    {
+      "op": "multiply",
+      "optimizer": "SGD+mom",
+      "threshold": 1e-06,
+      "mse": 5.847882223257971e-16
+    },
+    {
+      "op": "divide",
+      "optimizer": "SGD+mom",
+      "threshold": 1e-06,
+      "mse": 1.9769096660234161e-28
+    },
+    {
+      "op": "identity",
+      "optimizer": "SGD+mom",
+      "threshold": 1e-06,
+      "mse": 8.718848719898233e-24
+    },
+    {
+      "op": "reciprocal",
+      "optimizer": "SGD+mom",
+      "threshold": 1e-06,
+      "mse": 1.2203761945046209e-36
+    },
+    {
+      "op": "sin",
+      "optimizer": "SGD+mom",
+      "threshold": 1e-06,
+      "mse": 1.1266179912327787e-06
+    },
+    {
+      "op": "cos_add",
+      "optimizer": "SGD+mom",
+      "threshold": 1e-06,
+      "mse": 8.398975261279093e-07
+    },
+    {
+      "op": "add",
+      "optimizer": "Adam(def)",
+      "threshold": 0.01,
+      "mse": 2.0116414947040223e-25
+    },
+    {
+      "op": "subtract",
+      "optimizer": "Adam(def)",
+      "threshold": 0.01,
+      "mse": 2.941252805300782e-25
+    },
+    {
+      "op": "multiply",
+      "optimizer": "Adam(def)",
+      "threshold": 0.01,
+      "mse": 5.847882223257971e-16
+    },
+    {
+      "op": "divide",
+      "optimizer": "Adam(def)",
+      "threshold": 0.01,
+      "mse": 1.9769096660234161e-28
+    },
+    {
+      "op": "identity",
+      "optimizer": "Adam(def)",
+      "threshold": 0.01,
+      "mse": 8.718848719898233e-24
+    },
+    {
+      "op": "reciprocal",
+      "optimizer": "Adam(def)",
+      "threshold": 0.01,
+      "mse": 1.2203761945046209e-36
+    },
+    {
+      "op": "sin",
+      "optimizer": "Adam(def)",
+      "threshold": 0.01,
+      "mse": 8.377795258084475e-36
+    },
+    {
+      "op": "cos_add",
+      "optimizer": "Adam(def)",
+      "threshold": 0.01,
+      "mse": 3.509858511054632e-26
+    },
+    {
+      "op": "add",
+      "optimizer": "Adam(\u03b2\u2082=0.5)",
+      "threshold": 0.01,
+      "mse": 2.0116414947040223e-25
+    },
+    {
+      "op": "subtract",
+      "optimizer": "Adam(\u03b2\u2082=0.5)",
+      "threshold": 0.01,
+      "mse": 2.941252805300782e-25
+    },
+    {
+      "op": "multiply",
+      "optimizer": "Adam(\u03b2\u2082=0.5)",
+      "threshold": 0.01,
+      "mse": 5.847882223257971e-16
+    },
+    {
+      "op": "divide",
+      "optimizer": "Adam(\u03b2\u2082=0.5)",
+      "threshold": 0.01,
+      "mse": 1.9769096660234161e-28
+    },
+    {
+      "op": "identity",
+      "optimizer": "Adam(\u03b2\u2082=0.5)",
+      "threshold": 0.01,
+      "mse": 8.718848719898233e-24
+    },
+    {
+      "op": "reciprocal",
+      "optimizer": "Adam(\u03b2\u2082=0.5)",
+      "threshold": 0.01,
+      "mse": 1.2203761945046209e-36
+    },
+    {
+      "op": "sin",
+      "optimizer": "Adam(\u03b2\u2082=0.5)",
+      "threshold": 0.01,
+      "mse": 8.377795258084475e-36
+    },
+    {
+      "op": "cos_add",
+      "optimizer": "Adam(\u03b2\u2082=0.5)",
+      "threshold": 0.01,
+      "mse": 3.509858511054632e-26
+    },
+    {
+      "op": "add",
+      "optimizer": "AdamW",
+      "threshold": 0.01,
+      "mse": 2.0116414947040223e-25
+    },
+    {
+      "op": "subtract",
+      "optimizer": "AdamW",
+      "threshold": 0.01,
+      "mse": 2.941252805300782e-25
+    },
+    {
+      "op": "multiply",
+      "optimizer": "AdamW",
+      "threshold": 0.01,
+      "mse": 5.847882223257971e-16
+    },
+    {
+      "op": "divide",
+      "optimizer": "AdamW",
+      "threshold": 0.01,
+      "mse": 1.9769096660234161e-28
+    },
+    {
+      "op": "identity",
+      "optimizer": "AdamW",
+      "threshold": 0.01,
+      "mse": 8.718848719898233e-24
+    },
+    {
+      "op": "reciprocal",
+      "optimizer": "AdamW",
+      "threshold": 0.01,
+      "mse": 7.495948882439452e-08
+    },
+    {
+      "op": "sin",
+      "optimizer": "AdamW",
+      "threshold": 0.01,
+      "mse": 8.377795258084475e-36
+    },
+    {
+      "op": "cos_add",
+      "optimizer": "AdamW",
+      "threshold": 0.01,
+      "mse": 3.509858511054632e-26
+    },
+    {
+      "op": "add",
+      "optimizer": "RAdam",
+      "threshold": 0.01,
+      "mse": 2.0116414947040223e-25
+    },
+    {
+      "op": "subtract",
+      "optimizer": "RAdam",
+      "threshold": 0.01,
+      "mse": 2.941252805300782e-25
+    },
+    {
+      "op": "multiply",
+      "optimizer": "RAdam",
+      "threshold": 0.01,
+      "mse": 5.847882223257971e-16
+    },
+    {
+      "op": "divide",
+      "optimizer": "RAdam",
+      "threshold": 0.01,
+      "mse": 1.9769096660234161e-28
+    },
+    {
+      "op": "identity",
+      "optimizer": "RAdam",
+      "threshold": 0.01,
+      "mse": 8.718848719898233e-24
+    },
+    {
+      "op": "reciprocal",
+      "optimizer": "RAdam",
+      "threshold": 0.01,
+      "mse": 1.2203761945046209e-36
+    },
+    {
+      "op": "sin",
+      "optimizer": "RAdam",
+      "threshold": 0.01,
+      "mse": 8.377795258084475e-36
+    },
+    {
+      "op": "cos_add",
+      "optimizer": "RAdam",
+      "threshold": 0.01,
+      "mse": 3.509858511054632e-26
+    },
+    {
+      "op": "add",
+      "optimizer": "NAdam",
+      "threshold": 0.01,
+      "mse": 2.0116414947040223e-25
+    },
+    {
+      "op": "subtract",
+      "optimizer": "NAdam",
+      "threshold": 0.01,
+      "mse": 2.941252805300782e-25
+    },
+    {
+      "op": "multiply",
+      "optimizer": "NAdam",
+      "threshold": 0.01,
+      "mse": 5.847882223257971e-16
+    },
+    {
+      "op": "divide",
+      "optimizer": "NAdam",
+      "threshold": 0.01,
+      "mse": 1.9769096660234161e-28
+    },
+    {
+      "op": "identity",
+      "optimizer": "NAdam",
+      "threshold": 0.01,
+      "mse": 8.718848719898233e-24
+    },
+    {
+      "op": "reciprocal",
+      "optimizer": "NAdam",
+      "threshold": 0.01,
+      "mse": 1.2203761945046209e-36
+    },
+    {
+      "op": "sin",
+      "optimizer": "NAdam",
+      "threshold": 0.01,
+      "mse": 8.377795258084475e-36
+    },
+    {
+      "op": "cos_add",
+      "optimizer": "NAdam",
+      "threshold": 0.01,
+      "mse": 3.509858511054632e-26
+    },
+    {
+      "op": "add",
+      "optimizer": "RMSProp",
+      "threshold": 0.01,
+      "mse": 2.0116414947040223e-25
+    },
+    {
+      "op": "subtract",
+      "optimizer": "RMSProp",
+      "threshold": 0.01,
+      "mse": 2.941252805300782e-25
+    },
+    {
+      "op": "multiply",
+      "optimizer": "RMSProp",
+      "threshold": 0.01,
+      "mse": 5.847882223257971e-16
+    },
+    {
+      "op": "divide",
+      "optimizer": "RMSProp",
+      "threshold": 0.01,
+      "mse": 1.9769096660234161e-28
+    },
+    {
+      "op": "identity",
+      "optimizer": "RMSProp",
+      "threshold": 0.01,
+      "mse": 8.718848719898233e-24
+    },
+    {
+      "op": "reciprocal",
+      "optimizer": "RMSProp",
+      "threshold": 0.01,
+      "mse": 1.2203761945046209e-36
+    },
+    {
+      "op": "sin",
+      "optimizer": "RMSProp",
+      "threshold": 0.01,
+      "mse": 8.377795258084475e-36
+    },
+    {
+      "op": "cos_add",
+      "optimizer": "RMSProp",
+      "threshold": 0.01,
+      "mse": 3.509858511054632e-26
+    },
+    {
+      "op": "add",
+      "optimizer": "Adagrad",
+      "threshold": 0.01,
+      "mse": 2.0116414947040223e-25
+    },
+    {
+      "op": "subtract",
+      "optimizer": "Adagrad",
+      "threshold": 0.01,
+      "mse": 2.941252805300782e-25
+    },
+    {
+      "op": "multiply",
+      "optimizer": "Adagrad",
+      "threshold": 0.01,
+      "mse": 5.847882223257971e-16
+    },
+    {
+      "op": "divide",
+      "optimizer": "Adagrad",
+      "threshold": 0.01,
+      "mse": 1.9769096660234161e-28
+    },
+    {
+      "op": "identity",
+      "optimizer": "Adagrad",
+      "threshold": 0.01,
+      "mse": 8.718848719898233e-24
+    },
+    {
+      "op": "reciprocal",
+      "optimizer": "Adagrad",
+      "threshold": 0.01,
+      "mse": 1.2203761945046209e-36
+    },
+    {
+      "op": "sin",
+      "optimizer": "Adagrad",
+      "threshold": 0.01,
+      "mse": 8.539125647956002e-07
+    },
+    {
+      "op": "cos_add",
+      "optimizer": "Adagrad",
+      "threshold": 0.01,
+      "mse": 2.9158649146409235e-06
+    },
+    {
+      "op": "add",
+      "optimizer": "Adadelta",
+      "threshold": 0.01,
+      "mse": 2.0116414947040223e-25
+    },
+    {
+      "op": "subtract",
+      "optimizer": "Adadelta",
+      "threshold": 0.01,
+      "mse": 2.941252805300782e-25
+    },
+    {
+      "op": "multiply",
+      "optimizer": "Adadelta",
+      "threshold": 0.01,
+      "mse": 5.847882223257971e-16
+    },
+    {
+      "op": "divide",
+      "optimizer": "Adadelta",
+      "threshold": 0.01,
+      "mse": 1.9769096660234161e-28
+    },
+    {
+      "op": "identity",
+      "optimizer": "Adadelta",
+      "threshold": 0.01,
+      "mse": 8.718848719898233e-24
+    },
+    {
+      "op": "reciprocal",
+      "optimizer": "Adadelta",
+      "threshold": 0.01,
+      "mse": 1.2203761945046209e-36
+    },
+    {
+      "op": "sin",
+      "optimizer": "Adadelta",
+      "threshold": 0.01,
+      "mse": 1.2453054050426372e-05
+    },
+    {
+      "op": "cos_add",
+      "optimizer": "Adadelta",
+      "threshold": 0.01,
+      "mse": 1.2361442075450052e-06
+    },
+    {
+      "op": "add",
+      "optimizer": "Rprop",
+      "threshold": 0.01,
+      "mse": 2.0116414947040223e-25
+    },
+    {
+      "op": "subtract",
+      "optimizer": "Rprop",
+      "threshold": 0.01,
+      "mse": 2.941252805300782e-25
+    },
+    {
+      "op": "multiply",
+      "optimizer": "Rprop",
+      "threshold": 0.01,
+      "mse": 5.847882223257971e-16
+    },
+    {
+      "op": "divide",
+      "optimizer": "Rprop",
+      "threshold": 0.01,
+      "mse": 1.9769096660234161e-28
+    },
+    {
+      "op": "identity",
+      "optimizer": "Rprop",
+      "threshold": 0.01,
+      "mse": 8.718848719898233e-24
+    },
+    {
+      "op": "reciprocal",
+      "optimizer": "Rprop",
+      "threshold": 0.01,
+      "mse": 1.2203761945046209e-36
+    },
+    {
+      "op": "sin",
+      "optimizer": "Rprop",
+      "threshold": 0.01,
+      "mse": 8.377795258084475e-36
+    },
+    {
+      "op": "cos_add",
+      "optimizer": "Rprop",
+      "threshold": 0.01,
+      "mse": 3.509858511054632e-26
+    },
+    {
+      "op": "add",
+      "optimizer": "SGD+mom",
+      "threshold": 0.01,
+      "mse": 2.0116414947040223e-25
+    },
+    {
+      "op": "subtract",
+      "optimizer": "SGD+mom",
+      "threshold": 0.01,
+      "mse": 2.941252805300782e-25
+    },
+    {
+      "op": "multiply",
+      "optimizer": "SGD+mom",
+      "threshold": 0.01,
+      "mse": 5.847882223257971e-16
+    },
+    {
+      "op": "divide",
+      "optimizer": "SGD+mom",
+      "threshold": 0.01,
+      "mse": 1.9769096660234161e-28
+    },
+    {
+      "op": "identity",
+      "optimizer": "SGD+mom",
+      "threshold": 0.01,
+      "mse": 8.718848719898233e-24
+    },
+    {
+      "op": "reciprocal",
+      "optimizer": "SGD+mom",
+      "threshold": 0.01,
+      "mse": 1.2203761945046209e-36
+    },
+    {
+      "op": "sin",
+      "optimizer": "SGD+mom",
+      "threshold": 0.01,
+      "mse": 8.377795258084475e-36
+    },
+    {
+      "op": "cos_add",
+      "optimizer": "SGD+mom",
+      "threshold": 0.01,
+      "mse": 3.2967135423078255e-07
+    }
+  ]
+}

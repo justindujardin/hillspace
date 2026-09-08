@@ -72,7 +72,7 @@ def train(
     epochs: int,
     math_weight: float,
     operations: List[str],
-    optimizer_type: Literal["schedulefree", "adamw", "adam"],
+    optimizer_type: Literal["schedulefree", "adamw", "adam", "sgd"],
     device: str = "auto",
     project_name: str = "jac-arithmetic",
     run_name: Optional[str] = None,
@@ -109,6 +109,12 @@ def train(
             betas=betas,
             weight_decay=weight_decay,
             eps=eps,
+        )
+    elif optimizer_type == "sgd":
+        # Use standard SGD optimizer
+        optimizer = torch.optim.SGD(
+            model.get_arithmetic_parameters(),
+            lr=math_lr,
         )
 
     config = {
@@ -380,28 +386,28 @@ def main():
     train_dtype = torch.float64
     print(f"Using device: {device} with dtype: {train_dtype}")
     space: MathySpace = "hill_snap"
-    optimizer_type = "schedulefree"  # "adamw" or "adam" or "schedulefree"
+    optimizer_type = "adam"  # "adamw" or "adam" or "schedulefree"
 
     # Create dataloaders for ALL operations
     operations = [
         # Additive operations
         "add",
         "subtract",
-        "negation",
+        # "negation",
         # "identity", # Same as exponential, need a diff name to train both (pass)
         # Exponential operations
         "multiply",
         "divide",
-        "identity",
-        "reciprocal",
-        # Trigonometric operations
-        "cos",
-        "sin",
-        # Trigonometric product operations
-        "cos_add",
-        "sin_add",
-        "cos_sub",
-        "sin_sub",
+        # "identity",
+        # "reciprocal",
+        # # Trigonometric operations
+        # "cos",
+        # "sin",
+        # # Trigonometric product operations
+        # "cos_add",
+        # "sin_add",
+        # "cos_sub",
+        # "sin_sub",
     ]
     train_loaders = {}
     quick_eval_loaders = {}

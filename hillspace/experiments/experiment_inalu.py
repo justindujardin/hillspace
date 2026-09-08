@@ -1,3 +1,31 @@
+"""Head-to-head with iNALU (Schlör et al. 2020) on their protocol, paper §4.3.
+
+The comparison adopts iNALU's own training machinery so exactly two deltas
+remain ours to defend:
+
+  base (theirs): RMSProp at lr=0.01 (nalu_syn_simple_arith.py line 151;
+      alpha=0.9 / eps=1e-10 mirror TF's RMSPropOptimizer defaults),
+      batch_size=64, up to 100 epochs, 64k samples per operation, and their
+      three distribution configs (exponential, uniform, truncated normal).
+      Their paper text says Adam at lr=0.001; the released code says
+      RMSProp at 0.01. We follow the code.
+
+  Distribution notation, from their sample(): U(a, b) is uniform on
+  [a, b]; N(a, b) is a normal with mean (a+b)/2 and std (b-a)/6 truncated
+  to [a, b]; E(s) draws np.random.exponential(s) with one scale shared by
+  both inputs. "E(0.8, 0.5)" in their figures is training scale 0.8,
+  extrapolation scale 0.5.
+
+  delta 1 — Goldilocks training (§2.4): the "universal" arm trains one model
+      on U(1e-8, 10) and evaluates across all their test distributions
+      without retraining. The "matched" arm trains on their distributions.
+
+  delta 2 — snapping at eval (§2.2, Path B): the reported numbers read the
+      converged selection, not the optimizer's residual approach to it.
+
+No regularization, clipping, or reinitialization (iNALU uses all three).
+"""
+
 import csv
 import glob
 import os
@@ -9,7 +37,6 @@ import numpy as np
 import pandas as pd
 import torch
 import torch.nn as nn
-from schedulefree import AdamWScheduleFree
 from torch.utils.data import DataLoader
 
 from ..dataset.operator_dataset import create_mathy_dataloaders
@@ -55,7 +82,7 @@ def periodic_eval(
     test_loaders: Dict[str, DataLoader],
     operations: List[str],
     device: str,
-    converged_loss: float = 1e-12,
+    converged_loss: float = 1e-14,
 ) -> Tuple[Dict[str, Dict[str, float]], bool]:
     """Run evaluation on test set and return metrics and convergence status."""
     model.eval()
@@ -160,36 +187,23 @@ def train_hill_space_model(
         test_loaders[operation] = test_loader
 
     # Initialize model
-    model = MathyUnit(
-        input_size=2, output_size=1, dtype=torch.float64, space="hill_snap"
-    )
+    model = MathyUnit(input_size=2, output_size=1, dtype=torch.float64)
     model.to(device)
 
-    # Training setup
-    betas = (0.9, 0.96)
-    weight_decay = 1e-8
-    eps = 1e-8
-    schedule_free = True  # Use schedule-free optimizer
-    optimizer = AdamWScheduleFree(
-        model.get_arithmetic_parameters(),
-        lr=0.1,
-        betas=betas,
-        weight_decay=weight_decay,
-        eps=eps,
-        warmup_steps=100,
+    # Training setup — iNALU's optimizer, matched to their TF configuration
+    # (RMSPropOptimizer learning_rate=0.01; decay -> alpha=0.9, epsilon=1e-10).
+    optimizer = torch.optim.RMSprop(
+        model.get_arithmetic_parameters(), lr=0.01, alpha=0.9, eps=1e-10
     )
     criterion = nn.MSELoss()
 
     converged_epoch = None
-    convergence_threshold = 1e-10
+    convergence_threshold = 1e-14
     recent_losses = []  # Track recent epoch losses
 
-    # Max 10 epochs (we find they converge or don't within ~3 so this is conservative)
-    for epoch in range(10):
+    for epoch in range(100):
 
         model.train()
-        if schedule_free:
-            optimizer.train()
         epoch_losses = []
 
         # Collect all batches and shuffle
@@ -223,26 +237,22 @@ def train_hill_space_model(
 
         # Periodic evaluation
         if epoch % eval_frequency == 0 or epoch <= 10:
-            if schedule_free:
-                optimizer.eval()
 
             eval_losses, eval_all_converged = periodic_eval(
                 model, quick_eval_loaders, operations, device, convergence_threshold
             )
-            if schedule_free:
-                optimizer.train()
 
             model.train()
 
-            # Print detailed progress
-            print(f"  Epoch {epoch:03d}, Train Loss: {avg_epoch_loss:.16f}")
-            for operation in operations:
-                if operation in eval_losses:
-                    eval_mse = eval_losses[operation]["mse"]
-                    weights = model.inspect_weights(operation)
-                    print(
-                        f"    {operation:8s}: eval_mse={eval_mse:.16f}, weights={weights}"
-                    )
+            # # Print detailed progress
+            # print(f"  Epoch {epoch:03d}, Train Loss: {avg_epoch_loss:.16f}")
+            # for operation in operations:
+            #     if operation in eval_losses:
+            #         eval_mse = eval_losses[operation]["mse"]
+            #         weights = model.inspect_weights(operation)
+            #         print(
+            #             f"    {operation:8s}: eval_mse={eval_mse:.16f}, weights={weights}"
+            #         )
 
             # Early stopping if converged on eval
             if eval_all_converged:
@@ -253,10 +263,12 @@ def train_hill_space_model(
         elif epoch % 10 == 0:  # Print every 10 epochs if no eval
             print(f"  Epoch {epoch:03d}, Loss: {avg_epoch_loss:.16f}")
 
-    # Final evaluation
-    if schedule_free:
-        optimizer.train()
+    # Final evaluation with snapping (§2.2, Path B): read the converged
+    # selection rather than the optimizer's residual. Training and the
+    # periodic convergence checks above run on the plain hill.
+    model.space = "hill_snap"
     results = evaluate_model(model, test_loaders, operations, device)
+    model.space = "hill"
 
     return model, results, converged_epoch or 100
 
@@ -270,11 +282,15 @@ def run_single_inalu_comparison(run_id: int) -> str:
 
     print(f"Starting iNALU comparison RUN {run_id + 1} (seed: {seed})")
 
-    # iNALU test configurations
+    # iNALU test configurations, plus one hostile range from the wider
+    # literature: Madsen & Johansen report that no model learns U[1.1, 1.2]
+    # (Neural Arithmetic Units, ICLR 2020, §4.1.3); their extrapolation
+    # range for that case is U[1.2, 6] (verified against the paper).
     test_configs = [
-        ("exponential_0.8_0.5", (0.8, 0.5), (0.8, 0.5), "exponential"),
+        ("exponential_0.8_0.5", (0.8, 0.8), (0.5, 0.5), "exponential"),
         ("uniform_-5_5_to_-10_-5", (-5.0, 5.0), (-10.0, -5.0), "uniform"),
         ("normal_-3_3_to_8_10", (-3.0, 3.0), (8.0, 10.0), "truncated_normal"),
+        ("uniform_1.1_1.2_to_1.2_6", (1.1, 1.2), (1.2, 6.0), "uniform"),
     ]
 
     operations = ["add", "subtract", "multiply", "divide"]
@@ -325,9 +341,12 @@ def run_single_inalu_comparison(run_id: int) -> str:
                 seed=seed,
             )
 
+            # Same read as the matched arm: snapped at evaluation (§2.2).
+            universal_model.space = "hill_snap"
             universal_results = evaluate_model(
                 universal_model, {operation: test_loader}, [operation], device
             )
+            universal_model.space = "hill"
 
             # Store results
             results.append(
@@ -458,6 +477,7 @@ def aggregate_results():
         "exponential_0.8_0.5": "E(0.8,0.5)",
         "uniform_-5_5_to_-10_-5": "U(-5,5)",
         "normal_-3_3_to_8_10": "N(-3,3)",
+        "uniform_1.1_1.2_to_1.2_6": "U(1.1,1.2)",
     }
 
     # iNALU baseline results (from paper)
@@ -540,6 +560,7 @@ def aggregate_results():
         "exponential_0.8_0.5",
         "uniform_-5_5_to_-10_-5",
         "normal_-3_3_to_8_10",
+        "uniform_1.1_1.2_to_1.2_6"
     ]:
         for operation in ["add", "subtract", "multiply", "divide"]:
             if config in table_data and operation in table_data[config]:
@@ -548,15 +569,19 @@ def aggregate_results():
                 config_display = config_names.get(config, config)
                 op_display = operation_names.get(operation, operation)
 
-                # Get iNALU baseline
-                inalu_mse, inalu_std = inalu_baselines.get((config, operation), 0.0)
-                inalu_std_formatted = (
-                    f" ± {format_mse(inalu_std)}" if inalu_std > 0 else ""
-                )
-                inalu_mse_formatted = format_mse(inalu_mse)
-                inalu_mse_formatted += inalu_std_formatted
-                if inalu_mse > 1e-2:
-                    inalu_mse_formatted = f"**{inalu_mse_formatted}**"
+                # Get iNALU baseline (or empty if not available - not 0.0 which looks like perfect loss)
+                 
+                if (config, operation) in inalu_baselines:
+                    inalu_mse, inalu_std = inalu_baselines.get((config, operation), (0.0, 0.0))
+                    inalu_std_formatted = (
+                        f" ± {format_mse(inalu_std)}" if inalu_std > 0 else ""
+                    )
+                    inalu_mse_formatted = format_mse(inalu_mse)
+                    inalu_mse_formatted += inalu_std_formatted
+                    if inalu_mse > 1e-2:
+                        inalu_mse_formatted = f"**{inalu_mse_formatted}**"
+                else:
+                    inalu_mse_formatted = ""
 
                 matched_mse = format_mse(data["matched_mse"])
                 matched_mse_std = format_mse(data["matched_mse_std"])
@@ -619,5 +644,5 @@ def aggregate_results():
 if __name__ == "__main__":
     torch.multiprocessing.set_start_method("spawn", force=True)
     print("Starting iNALU comparison experiment...")
-    # run_inalu_comparison_parallel(6)
+    run_inalu_comparison_parallel(6)
     aggregate_results()

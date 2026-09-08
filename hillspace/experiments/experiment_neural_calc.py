@@ -1,30 +1,27 @@
 import sys
-import numpy as np
 
+
+# region
+import numpy as np
 
 class NeuralCalculator:
     def __init__(self):
-        # Hill Space weights: tanh(15) ≈ 1.0, sigmoid(15) ≈ 1.0
-        # After constraint W = tanh(W_hat) * sigmoid(M_hat):
-        #   Addition/Multiply:  [15,  15] → [1.0,  1.0] → x + y / x * y
-        #   Subtract/Division:  [15, -15] → [1.0, -1.0] → x - y / x / y
         self.weights = {
-            "add": np.array([[15.0, 15.0], [15.0, 15.0]], dtype=np.float16),
-            "sub": np.array([[15.0, -15.0], [15.0, 15.0]], dtype=np.float16),
-            "mul": np.array([[15.0, 15.0], [15.0, 15.0]], dtype=np.float16),
-            "div": np.array([[15.0, -15.0], [15.0, 15.0]], dtype=np.float16),
+            "add": np.array([[100.0, 100.0], [100.0, 100.0]]),
+            "sub": np.array([[100.0, -100.0], [100.0, 100.0]]),
+            "mul": np.array([[100.0, 100.0], [100.0, 100.0]]),
+            "div": np.array([[100.0, -100.0], [100.0, 100.0]]),
         }
 
     def compute(self, x, y, operation):
-        """Neural computation with enumerated weights"""
         W_hat, M_hat = self.weights[operation]
-        # Hill Space constraint: W = tanh(W_hat) * sigmoid(M_hat)
         W = np.tanh(W_hat) * (1 / (1 + np.exp(-M_hat)))
         inputs = np.array([x, y])
         if operation in ["add", "sub"]:
             return np.dot(inputs, W)  # Linear: x*w1 + y*w2
         else:  # mul, div
             return np.prod(np.power(inputs, W))  # Exponential: x^w1 * y^w2
+# endregion
 
 
 def main():
