@@ -7,7 +7,7 @@ authors:
     affiliation: "DuJardin Consulting, LLC"
     email: "justin@dujardinconsulting.com"
 credit: "supersedes 10.36227/techrxiv.175339930.03949307/v2"
-date: 2026-09-07
+date: 2026-09-08
 pdf_name: "hill-space.pdf"
 social:
   figure: { kind: hill-surface, range: 15, marker: [2, 2], azimuthDeg: 40 }
