@@ -6,6 +6,7 @@ authors:
   - name: "Justin DuJardin"
     affiliation: "DuJardin Consulting, LLC"
     email: "justin@dujardinconsulting.com"
+    link: "https://justindujardin.com"
 credit: "supersedes 10.36227/techrxiv.175339930.03949307/v2"
 date: 2026-09-08
 pdf_name: "hill-space.pdf"

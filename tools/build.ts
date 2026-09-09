@@ -62,8 +62,6 @@ await buildNote({
   pdfName: "hill-space.pdf",
   toc: { web: "float" },
   site: "https://hillspace.justindujardin.com",
-  // the page this site belongs to, linked above the masthead
-  home: { label: "Justin DuJardin", href: "https://justindujardin.com" },
   // the field's words, marked in the prose with a plain description each
   glossary: "paper/glossary.yaml",
   colophon:
