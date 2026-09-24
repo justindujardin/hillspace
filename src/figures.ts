@@ -110,9 +110,9 @@ const rgb = (c: number[]) => `rgb(${c.map(Math.round).join(",")})`;
  * warm gray to its copper (tanh), the web-theme values rather than the
  * print inks so the hill sits in the page's own palette. */
 function heatRGB(v: number): number[] {
-  const neg = [69, 120, 140];
+  const neg = [53, 103, 123];
   const mid = [201, 192, 174];
-  const pos = [156, 97, 25];
+  const pos = [140, 84, 18];
   return v < 0 ? lerpC(mid, neg, -v) : lerpC(mid, pos, v);
 }
 
@@ -281,7 +281,7 @@ export function renderHillSurface(spec: HillSurface): string {
     h(
       "svg",
       { viewBox: `0 0 ${W} ${H}`, class: "chart hs-map", role: "img" },
-      surface,
+      h("g", { class: "hs-surface" }, surface),
       zAxis,
       marker,
       axisText(R * 0.7, -R * 1.45, "Ŵ (sign)"),
@@ -346,20 +346,18 @@ export function renderGradientVanishing(spec: GradientVanishing): string {
 
 // ── optimizer-matrix ─────────────────────────────────────────────────────
 
-/** Five bins for log₁₀ MSE, built from the site's own inks so the table
- * sits inside the page instead of on top of it: two slates for runs at or
- * near the floating-point floor, a pale slate for runs that stalled short,
- * sand for a mild failure, and a muted brick for a clear one. The cutoff
- * between stalled and failed is the paper's MSE > 1e-2. Ink is chosen per
- * bin so every cell's number reads at 4.5:1 or better. */
-function mseBin(v: number): { bg: string; fg: string } {
-  const cream = "#f6f1e6";
-  const dark = "#453425";
-  if (v <= -20) return { bg: "#33525e", fg: cream };
-  if (v <= -10) return { bg: "#4b6d78", fg: cream };
-  if (v <= -2) return { bg: "#95aeb6", fg: dark };
-  if (v <= 3) return { bg: "#c2a081", fg: dark };
-  return { bg: "#8a4631", fg: cream };
+/** Five bins for log₁₀ MSE, colored by the theme (.om-b0 … .om-b4 in
+ * both stylesheets) so the table sits inside the page instead of on top
+ * of it, by day, by night, and in print: two slates for runs at or near
+ * the floating-point floor, a pale slate for runs that stalled short, sand
+ * for a mild failure, and a muted brick for a clear one. The cutoff
+ * between stalled and failed is the paper's MSE > 1e-2. */
+function mseBin(v: number): string {
+  if (v <= -20) return "om-b0";
+  if (v <= -10) return "om-b1";
+  if (v <= -2) return "om-b2";
+  if (v <= 3) return "om-b3";
+  return "om-b4";
 }
 
 export function renderOptimizerMatrix(spec: OptimizerMatrix): string {
@@ -374,10 +372,7 @@ export function renderOptimizerMatrix(spec: OptimizerMatrix): string {
       .map(
         (r, i) =>
           `<tr><th>${text(r)}</th>${p.cells[i]
-            .map((v) => {
-              const c = mseBin(v);
-              return `<td style="background:${c.bg};color:${c.fg}" title="log10 MSE = ${v}">${v}</td>`;
-            })
+            .map((v) => `<td class="${mseBin(v)}" title="log10 MSE = ${v}">${v}</td>`)
             .join("")}</tr>`,
       )
       .join("");

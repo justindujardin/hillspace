@@ -61,6 +61,9 @@ await buildNote({
   codeLanguages: ["python"],
   pdfName: "hill-space.pdf",
   toc: { web: "float" },
+  // the DJC look, day and night; the reader's system chooses until they do
+  theme: "penname-theme-jd",
+  dark: true,
   site: "https://hillspace.justindujardin.com",
   // the field's words, marked in the prose with a plain description each
   glossary: "paper/glossary.yaml",

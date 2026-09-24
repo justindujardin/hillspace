@@ -13,5 +13,8 @@
     "penname": "github:justindujardin/penname",
     "tsx": "^4.23.1",
     "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "penname-theme-jd": "github:justindujardin/penname-theme-jd"
   }
 }

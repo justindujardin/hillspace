@@ -1,8 +1,8 @@
 /* Hill Space — web theme over the penname base. The base carries the
-   DJC paper palette and scale; this file is the hill vocabulary:
-   copper = tanh (sign), slate = sigmoid (magnitude gate), plum = the
-   composed weight W. The PDF theme defines the SAME token names with
-   print values; renderers only ever speak tokens. */
+   DJC palette, day and night, and the scale; this file is the hill
+   vocabulary: copper = tanh (sign), slate = sigmoid (magnitude gate),
+   plum = the composed weight W. The PDF theme defines the SAME token
+   names with print values; renderers only ever speak tokens. */
 
 :root {
   --tanh: var(--accent);
@@ -52,11 +52,11 @@ article h1:first-child { margin-top: 40px; }
 .circle-chart { flex: 0 0 auto; width: 210px; height: 210px; }
 .chip { display: inline-flex; align-items: baseline; gap: 6px; padding: 3px 9px; border-radius: 7px; font: 500 13px var(--mono); border: 1px solid var(--border); background: var(--panel-deep); color: var(--text); }
 .chip-label { font-size: 10.5px; color: var(--text-faint); text-transform: none; }
-.chip-in { border-color: rgba(69, 120, 140, 0.45); color: var(--sigmoid); }
-.chip-w { border-color: rgba(156, 97, 25, 0.4); color: var(--tanh); }
-.chip-out { border-color: rgba(124, 95, 136, 0.5); color: var(--weight); }
-.chip-ok { border-color: rgba(93, 125, 70, 0.45); color: var(--good); }
-.chip-err { border-color: rgba(168, 64, 47, 0.45); color: var(--bad); }
+.chip-in { border-color: color-mix(in srgb, var(--sigmoid) 45%, transparent); color: var(--sigmoid); }
+.chip-w { border-color: color-mix(in srgb, var(--tanh) 40%, transparent); color: var(--tanh); }
+.chip-out { border-color: color-mix(in srgb, var(--weight) 50%, transparent); color: var(--weight); }
+.chip-ok { border-color: color-mix(in srgb, var(--good) 45%, transparent); color: var(--good); }
+.chip-err { border-color: color-mix(in srgb, var(--bad) 45%, transparent); color: var(--bad); }
 .chip-dim { color: var(--text-dim); }
 
 /* the hero equation row: large labeled chips, few of them */
@@ -72,11 +72,11 @@ article h1:first-child { margin-top: 40px; }
 .v-label { font: 500 10px var(--mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-faint); }
 .v-value { font: 600 15.5px var(--mono); margin-top: 3px; color: var(--text); }
 .vcard.v-model .v-value { color: var(--weight); }
-.vcard.v-model { border-color: rgba(124, 95, 136, 0.5); }
+.vcard.v-model { border-color: color-mix(in srgb, var(--weight) 50%, transparent); }
 .vcard.v-truth .v-value { color: var(--text-dim); }
-.vcard.v-ok { border-color: rgba(93, 125, 70, 0.45); }
+.vcard.v-ok { border-color: color-mix(in srgb, var(--good) 45%, transparent); }
 .vcard.v-ok .v-value { color: var(--good); }
-.vcard.v-bad { border-color: rgba(168, 64, 47, 0.45); }
+.vcard.v-bad { border-color: color-mix(in srgb, var(--bad) 45%, transparent); }
 .vcard.v-bad .v-value { color: var(--bad); }
 .v-route { font: 400 12px var(--mono); color: var(--text-ghost); flex-basis: 100%; }
 
@@ -86,7 +86,7 @@ article h1:first-child { margin-top: 40px; }
 .steps-label { font: 500 11.5px var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); }
 .steps ol { margin: 10px 0 0; padding-left: 4px; font-size: 13.5px; color: var(--text-dim); list-style: none; counter-reset: step; }
 .steps li { margin: 8px 0; line-height: 2; counter-increment: step; position: relative; padding-left: 32px; }
-.steps li::before { content: counter(step); position: absolute; left: 0; top: 5px; width: 21px; height: 21px; border-radius: 50%; background: var(--sigmoid); color: #fbf7ee; font: 600 11.5px var(--mono); display: flex; align-items: center; justify-content: center; }
+.steps li::before { content: counter(step); position: absolute; left: 0; top: 5px; width: 21px; height: 21px; border-radius: 50%; background: var(--sigmoid); color: var(--on-accent); font: 600 11.5px var(--mono); display: flex; align-items: center; justify-content: center; }
 .js .steps-label { cursor: pointer; }
 .js .steps-label::after { content: " ▸"; color: var(--text-ghost); }
 .js .steps.open .steps-label::after { content: " ▾"; }
@@ -96,13 +96,16 @@ article h1:first-child { margin-top: 40px; }
 /* trig product grid */
 .tp-grid { display: grid; grid-template-columns: repeat(2, minmax(150px, 220px)); gap: 10px; margin: 12px 0; }
 .tp-cell { border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; background: var(--panel-deep); }
-.tp-cell.tp-selected { border-color: var(--weight); box-shadow: 0 0 10px rgba(124, 95, 136, 0.2); }
+.tp-cell.tp-selected { border-color: var(--weight); box-shadow: 0 0 10px color-mix(in srgb, var(--weight) 20%, transparent); }
 .tp-name { font: 500 12px var(--mono); color: var(--text-dim); }
 .tp-val { font: 500 15px var(--mono); color: var(--text); margin-top: 2px; }
 .tp-selected .tp-val { color: var(--weight); }
 .tp-coeff { font: 400 11px var(--mono); color: var(--text-ghost); margin-top: 2px; }
 
-/* optimizer matrix (embedded measured results; cell colors are data) */
+/* optimizer matrix (embedded measured results; cell colors are data).
+   Ten optimizer columns want more than the reading measure, so this one
+   figure hangs further into the margin than the others. */
+figure.fig[data-kind="optimizer-matrix"] { --reach: 96px; }
 .om-row { display: flex; gap: 20px; flex-wrap: wrap; flex-direction: column; }
 .om-panel { min-width: 0; overflow-x: auto; }
 .om-label { font: 500 12px var(--mono); color: var(--text-dim); margin-bottom: 8px; }
@@ -110,7 +113,21 @@ article h1:first-child { margin-top: 40px; }
 .om-table th { color: var(--text-faint); font-weight: 500; padding: 6px 10px; text-align: right; border: none; background: none; }
 .om-table tr:first-child th { text-align: center; vertical-align: bottom; padding: 6px 5px; font-size: 11px; overflow-wrap: break-word; }
 .om-table td { text-align: center; padding: 10px 12px; border: 1px solid var(--bg); min-width: 40px; }
+/* the five log₁₀ MSE bins (figures.ts mseBin): dark slate at the floor,
+   paler slate short of it, sand and brick for failures. Night keeps the
+   order and the names and pulls the pale bins down so the table does
+   not glow; every number reads at 4.5:1 or better on its own cell. */
+.om-b0 { background: light-dark(#33525e, #2d4b57); color: light-dark(#f1f7f9, #e6ddd0); }
+.om-b1 { background: light-dark(#4b6d78, #43636f); color: light-dark(#f1f7f9, #e6ddd0); }
+.om-b2 { background: light-dark(#95aeb6, #7893a0); color: light-dark(#453425, #111b20); }
+.om-b3 { background: light-dark(#c2a081, #a68a6d); color: light-dark(#453425, #111b20); }
+.om-b4 { background: light-dark(#8a4631, #8a4631); color: light-dark(#f1f7f9, #e6ddd0); }
 
-/* hill-surface readout */
+/* hill-surface readout. The surface's inks are data (figures.ts heatRGB),
+   the same by day and night, so at night its pale plateau would be the
+   brightest thing on the page; the night page dims the surface and leaves
+   the labels and the marker alone. */
 .hs-map { max-width: 720px; margin: 0 auto; display: block; }
+:root[data-scheme="dark"] .hs-surface { filter: brightness(0.78); }
+@media (prefers-color-scheme: dark) { :root[data-scheme="auto"] .hs-surface { filter: brightness(0.78); } }
 .hs-readout { margin-top: 10px; justify-content: center; }

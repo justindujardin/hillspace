@@ -84,6 +84,11 @@ article h1 { font-size: 14pt; margin: 26pt 0 7pt; padding-top: 10pt; border-top:
 .om-table th { color: var(--text-faint); font-weight: 500; padding: 2.5pt 4.5pt; text-align: right; border: none; background: none; font-family: var(--mono); }
 .om-table tr:first-child th { text-align: center; vertical-align: bottom; font-size: 7pt; overflow-wrap: break-word; }
 .om-table td { text-align: center; padding: 4.5pt 5.5pt; border: 0.5pt solid #ffffff; }
+.om-b0 { background: #33525e; color: #ffffff; }
+.om-b1 { background: #4b6d78; color: #ffffff; }
+.om-b2 { background: #95aeb6; color: #16181d; }
+.om-b3 { background: #c2a081; color: #16181d; }
+.om-b4 { background: #8a4631; color: #ffffff; }
 
 /* hill-surface */
 .hs-map { max-width: 100%; }
